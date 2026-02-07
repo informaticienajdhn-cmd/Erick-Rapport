@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Test Performance CSS - ERICKRAPPORT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #00ffff;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 255, 255, 0.05);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: linear-gradient(145deg, #050505, #0a0a0a);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            background: #00ffff;
+            color: #0a0a0a;
+            box-shadow: 0 0 20px #00ffff;
+        }
+        .results {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #39ff14;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        .metric-label {
+            font-weight: bold;
+        }
+        .metric-value {
+            color: #39ff14;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #050505;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #39ff14, #bf00ff);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🚀 Test de Performance CSS - ERICKRAPPORT</h1>
+        <p>Ce test compare les performances entre la version originale et la version optimisée de votre CSS.</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="test-button" onclick="runPerformanceTest()">▶️ Lancer le Test</button>
+            <button class="test-button" onclick="clearResults()">🗑️ Effacer</button>
+            <button class="test-button" onclick="generateReport()">📊 Rapport</button>
+        </div>
+        
+        <div id="progress-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <p id="progress-text">Préparation du test...</p>
+        </div>
+        
+        <div id="results" class="results" style="display: none;">
+            <h2>📊 Résultats du Test</h2>
+            <div id="metrics"></div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🔧 Configuration CSS</h2>
+        <div id="css-config">
+            <p>Chargement de la configuration...</p>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>📈 Recommandations d'Optimisation</h2>
+        <ul>
+            <li><strong>Version Minifiée :</strong> Utilisez <code>styles-minified.css</code> en production</li>
+            <li><strong>Compression Gzip :</strong> Activez la compression sur votre serveur</li>
+            <li><strong>CDN :</strong> Utilisez un CDN pour les polices Google Fonts</li>
+            <li><strong>Cache :</strong> Configurez des en-têtes de cache appropriés</li>
+            <li><strong>Critical CSS :</strong> Inlinez le CSS critique pour le rendu initial</li>
+        </ul>
+    </div>
+
+    <script>
+        let testResults = {};
+        
+        async function runPerformanceTest() {
+            showProgress();
+            updateProgress(10, 'Initialisation du test...');
+            
+            // Test de la version originale
+            updateProgress(20, 'Test de la version originale...');
+            const originalResults = await testCSSVersion('styles.css');
+            
+            // Test de la version optimisée
+            updateProgress(50, 'Test de la version optimisée...');
+            const optimizedResults = await testCSSVersion('styles-optimized.css');
+            
+            // Test de la version minifiée
+            updateProgress(80, 'Test de la version minifiée...');
+            const minifiedResults = await testCSSVersion('styles-minified.css');
+            
+            updateProgress(100, 'Test terminé !');
+            
+            // Calculer les améliorations
+            const improvements = calculateImprovements(originalResults, optimizedResults, minifiedResults);
+            
+            // Afficher les résultats
+            displayResults({
+                original: originalResults,
+                optimized: optimizedResults,
+                minified: minifiedResults,
+                improvements: improvements
+            });
+            
+            hideProgress();
+        }
+        
+        async function testCSSVersion(filename) {
+            const startTime = performance.now();
+            
+            // Simuler le chargement du CSS
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = filename + '?v=' + Date.now();
+            
+            return new Promise((resolve) => {
+                link.onload = () => {
+                    const endTime = performance.now();
+                    const loadTime = endTime - startTime;
+                    
+                    // Obtenir la taille du fichier
+                    fetch(filename)
+                        .then(response => response.text())
+                        .then(css => {
+                            const size = new Blob([css]).size;
+                            const lines = css.split('\n').length;
+                            
+                            resolve({
+                                filename: filename,
+                                loadTime: loadTime,
+                                size: size,
+                                sizeKB: (size / 1024).toFixed(2),
+                                lines: lines,
+                                rules: (css.match(/\{[^}]*\}/g) || []).length,
+                                selectors: (css.match(/[^{]+\{/g) || []).length,
+                                animations: (css.match(/@keyframes/g) || []).length,
+                                mediaQueries: (css.match(/@media/g) || []).length
+                            });
+                        });
+                };
+                
+                document.head.appendChild(link);
+            });
+        }
+        
+        function calculateImprovements(original, optimized, minified) {
+            return {
+                optimized: {
+                    loadTime: ((original.loadTime - optimized.loadTime) / original.loadTime * 100).toFixed(2),
+                    size: ((original.size - optimized.size) / original.size * 100).toFixed(2),
+                    lines: ((original.lines - optimized.lines) / original.lines * 100).toFixed(2)
+                },
+                minified: {
+                    loadTime: ((original.loadTime - minified.loadTime) / original.loadTime * 100).toFixed(2),
+                    size: ((original.size - minified.size) / original.size * 100).toFixed(2),
+                    lines: ((original.lines - minified.lines) / original.lines * 100).toFixed(2)
+                }
+            };
+        }
+        
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const metricsDiv = document.getElementById('metrics');
+            
+            let html = '<h3>📊 Comparaison des Versions</h3>';
+            
+            // Tableau de comparaison
+            html += '<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">';
+            html += '<tr style="background: rgba(0, 255, 255, 0.1);">';
+            html += '<th style="padding: 10px; border: 1px solid #00ffff;">Métrique</th>';
+            html += '<th style="padding: 10px; border: 1px solid #00ffff;">Original</th>';
+            html += '<th style="padding: 10px; border: 1px solid #00ffff;">Optimisé</th>';
+            html += '<th style="padding: 10px; border: 1px solid #00ffff;">Minifié</th>';
+            html += '</tr>';
+            
+            const metrics = ['loadTime', 'sizeKB', 'lines', 'rules', 'selectors', 'animations', 'mediaQueries'];
+            const labels = ['Temps de chargement (ms)', 'Taille (KB)', 'Lignes', 'Règles CSS', 'Sélecteurs', 'Animations', 'Requêtes média'];
+            
+            metrics.forEach((metric, index) => {
+                html += '<tr>';
+                html += `<td style="padding: 10px; border: 1px solid #00ffff;">${labels[index]}</td>`;
+                html += `<td style="padding: 10px; border: 1px solid #00ffff;">${data.original[metric].toFixed(2)}</td>`;
+                html += `<td style="padding: 10px; border: 1px solid #00ffff;">${data.optimized[metric].toFixed(2)}</td>`;
+                html += `<td style="padding: 10px; border: 1px solid #00ffff;">${data.minified[metric].toFixed(2)}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</table>';
+            
+            // Améliorations
+            html += '<h3>📈 Améliorations</h3>';
+            html += '<div class="metric">';
+            html += '<span class="metric-label">Optimisé vs Original :</span>';
+            html += `<span class="metric-value">-${data.improvements.optimized.size}% taille, -${data.improvements.optimized.loadTime}% temps</span>`;
+            html += '</div>';
+            
+            html += '<div class="metric">';
+            html += '<span class="metric-label">Minifié vs Original :</span>';
+            html += `<span class="metric-value">-${data.improvements.minified.size}% taille, -${data.improvements.minified.loadTime}% temps</span>`;
+            html += '</div>';
+            
+            metricsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+            
+            testResults = data;
+        }
+        
+        function showProgress() {
+            document.getElementById('progress-container').style.display = 'block';
+        }
+        
+        function hideProgress() {
+            setTimeout(() => {
+                document.getElementById('progress-container').style.display = 'none';
+            }, 1000);
+        }
+        
+        function updateProgress(percent, text) {
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = text;
+        }
+        
+        function clearResults() {
+            document.getElementById('results').style.display = 'none';
+            testResults = {};
+        }
+        
+        function generateReport() {
+            if (Object.keys(testResults).length === 0) {
+                alert('Veuillez d\'abord lancer le test de performance.');
+                return;
+            }
+            
+            const report = {
+                timestamp: new Date().toISOString(),
+                testResults: testResults,
+                recommendations: [
+                    'Utilisez la version minifiée en production',
+                    'Activez la compression gzip',
+                    'Utilisez un CDN pour les polices',
+                    'Configurez le cache approprié'
+                ]
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'css-performance-report.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Charger la configuration CSS
+        async function loadCSSConfig() {
+            try {
+                const response = await fetch('css-config.php');
+                const config = await response.json();
+                
+                let html = '<h3>Configuration Actuelle</h3>';
+                html += `<p><strong>Environnement :</strong> ${config.environment}</p>`;
+                html += `<p><strong>Fichier :</strong> ${config.statistics.file}</p>`;
+                html += `<p><strong>Taille :</strong> ${config.statistics.size_kb} KB</p>`;
+                html += `<p><strong>Lignes :</strong> ${config.statistics.lines}</p>`;
+                html += `<p><strong>Version :</strong> ${config.statistics.version}</p>`;
+                
+                document.getElementById('css-config').innerHTML = html;
+            } catch (error) {
+                document.getElementById('css-config').innerHTML = '<p>Erreur lors du chargement de la configuration.</p>';
+            }
+        }
+        
+        // Charger la configuration au démarrage
+        loadCSSConfig();
+    </script>
+</body>
+</html>

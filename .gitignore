@@ -1,0 +1,28 @@
+# Node modules et dépendances
+node_modules/
+vendor/
+.venv/
+
+# Dossiers temporaires et de logs
+temp/
+logs/
+uploads/
+
+# PHP Portable (très volumineux)
+php-portable/
+
+# OS et IDE
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Fichiers de configuration locaux
+.env
+.env.local
+.env.*.local
+
+# Caches
+.opcache/

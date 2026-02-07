@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link rel="stylesheet" href="styles.css?v=<?php echo time(); ?>">
+</head>
+<body class="body-import">
+    <header>
+        <h1>GESTION DES SUIVIS DES PAIEMENTS</h1>
+    </header>
+    <div class="container">
+        <!-- Formulaire pour télécharger les fichiers -->
+        <form id="uploadFormSuivi" action="upload_suivi_paiement.php" method="POST" enctype="multipart/form-data" style="display: flex; gap: 5px; align-items: center; margin-bottom: 2px; flex-shrink: 0;">
+            <div style="flex: 1;">
+                <label for="file" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Fichier Excel :</label>
+                <input type="file" name="excel_files[]" id="file" accept=".xls,.xlsx" multiple required style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+            </div>
+            <button type="button" class="btn-telecharger-compact" style="margin-top: 15px; padding: 3px 6px; font-size: 9px; height: 22px;">📂 Upload</button>
+        </form>
+        
+        <!-- Formulaire pour fusionner les listes -->
+        <?php
+        $uploadDir = 'uploads/';
+        $hasFiles = is_dir($uploadDir) && count(array_diff(scandir($uploadDir), ['.', '..'])) > 0;
+        ?>
+        <form id="suiviForm" action="suivipaiement.php" method="POST" style="margin-bottom: 10px;">
+            <!-- Section de paramétrage -->
+            <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-shrink: 0;">
+                <div style="flex: 1;">
+                    <label for="titre_suivi" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Titre du rapport :</label>
+                    <input type="text" id="titre_suivi" name="titre_suivi" value="SUIVI DES PAIEMENTS" style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+                </div>
+                <div style="flex: 1;">
+                    <label for="commune_suivi" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Commune :</label>
+                    <input type="text" id="commune_suivi" name="commune_suivi" placeholder="Ex: KARIANGA" style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+                </div>
+                <div style="flex: 1;">
+                    <label for="terroir_suivi" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Terroir :</label>
+                    <input type="text" id="terroir_suivi" name="terroir_suivi" placeholder="Ex: KARIANGA" style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+                </div>
+            </div>
+            <button type="submit" class="btn-fusionner" <?php echo $hasFiles ? '' : 'disabled'; ?>>🔗 Fusionner les listes</button>
+        </form>
+        
+        <!-- Barre de progression -->
+        <div class="progress-container" style="opacity: 0;">
+            <div class="progress-bar" id="progress-bar"></div>
+            <p id="progress-text">0%</p>
+        </div>
+        
+        <!-- Onglets de progression détaillée -->
+        <div class="progress-details" id="progress-details" style="display: none;">
+            <ul class="progress-steps">
+                <li data-step="init">Initialisation</li>
+                <li data-step="read">Lecture fichiers</li>
+                <li data-step="merge">Fusion données</li>
+                <li data-step="sheets">Feuilles finales</li>
+                <li data-step="final">Finalisation</li>
+            </ul>
+            <div class="progress-log" id="progress-log"></div>
+        </div>
+        
+        <div id="message-container"></div>
+    </div>
+
+<script src="js/common.js"></script>
+<script>
+// Charger les activités et communes pour le formulaire de canevas
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('api_get_params.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Charger les activités
+                const selectActivite = document.getElementById('canevas_activite');
+                data.activites.forEach(activite => {
+                    const option = document.createElement('option');
+                    option.value = activite.id;
+                    option.textContent = activite.nom;
+                    selectActivite.appendChild(option);
+                });
+                
+                // Charger les communes
+                const selectCommune = document.getElementById('canevas_commune');
+                data.communes.forEach(commune => {
+                    const option = document.createElement('option');
+                    option.value = commune.id;
+                    option.textContent = commune.nom;
+                    selectCommune.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error('Erreur chargement params:', error));
+    
+    // Gérer la soumission du formulaire de canevas
+    document.getElementById('canevasForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const messageDiv = document.getElementById('canevas-message');
+        
+        messageDiv.innerHTML = '<span style="color: blue;">⏳ Enregistrement en cours...</span>';
+        
+        fetch('upload_canevas.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                messageDiv.innerHTML = '<span style="color: green;">✅ ' + data.message + '</span>';
+                document.getElementById('canevasForm').reset();
+            } else {
+                messageDiv.innerHTML = '<span style="color: red;">❌ ' + data.error + '</span>';
+            }
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        })
+        .catch(error => {
+            messageDiv.innerHTML = '<span style="color: red;">❌ Erreur: ' + error.message + '</span>';
+        });
+    });
+});
+</script>
+
+</body>
+</html>

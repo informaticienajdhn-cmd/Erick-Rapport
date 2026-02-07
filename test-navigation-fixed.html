@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Navigation Corrigée - ERICKRAPPORT</title>
+    <link rel="stylesheet" href="styles-optimized.css?v=<?php echo time(); ?>">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.05);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid #39ff14;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: rgba(57, 255, 20, 0.2);
+            border: 1px solid #39ff14;
+            color: #39ff14;
+        }
+        .status.error {
+            background: rgba(255, 0, 64, 0.2);
+            border: 1px solid #ff0040;
+            color: #ff0040;
+        }
+        .status.info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+        .test-button {
+            background: linear-gradient(145deg, #050505, #0a0a0a);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            background: #00ffff;
+            color: #0a0a0a;
+            box-shadow: 0 0 20px #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Navigation Corrigée - ERICKRAPPORT</h1>
+        <p>Ce test vérifie que la navigation et le bouton retour fonctionnent correctement après les corrections.</p>
+        
+        <div class="test-section">
+            <h2>📋 Instructions de Test</h2>
+            <ol>
+                <li><strong>Ouvrez la console du navigateur</strong> (F12 → Console)</li>
+                <li><strong>Cliquez sur "Fusionner"</strong> pour charger le module de fusion</li>
+                <li><strong>Vérifiez</strong> que le bouton "Retour à l'accueil" est toujours visible</li>
+                <li><strong>Cliquez sur "Retour à l'accueil"</strong> et vérifiez qu'il fonctionne</li>
+                <li><strong>Répétez</strong> avec "Suivi des paiements"</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Test Manuel</h2>
+            <p>Utilisez les boutons ci-dessous pour tester la navigation :</p>
+            
+            <div style="display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+                <button class="menu-btn" data-page="fusion">Fusionner</button>
+                <button class="menu-btn" data-page="suivi">Suivi des paiements</button>
+                <button class="menu-btn return-btn" data-action="home">
+                    <span class="btn-icon">🏠</span>
+                    <span class="btn-text">Retour à l'accueil</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Résultats du Test</h2>
+            <div id="test-results">
+                <p class="status info">Cliquez sur les boutons pour tester...</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Tests Automatiques</h2>
+            <button class="test-button" onclick="testNavigation()">Test Navigation</button>
+            <button class="test-button" onclick="testReturnButton()">Test Bouton Retour</button>
+            <button class="test-button" onclick="testContentLoading()">Test Chargement Contenu</button>
+            <button class="test-button" onclick="clearResults()">Effacer Résultats</button>
+        </div>
+
+        <div class="test-section">
+            <h2>🔍 Informations de Debug</h2>
+            <div id="debug-info">
+                <p><strong>Application ErickRapportApp :</strong> <span id="app-status"></span></p>
+                <p><strong>Fonction returnToHome :</strong> <span id="return-function-status"></span></p>
+                <p><strong>Fonction loadHomeContent :</strong> <span id="load-function-status"></span></p>
+                <p><strong>Élément content :</strong> <span id="content-element-status"></span></p>
+                <p><strong>Bouton retour :</strong> <span id="return-button-status"></span></p>
+                <p><strong>Événements attachés :</strong> <span id="events-status"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="content" class="content-area" style="margin: 20px; padding: 20px; background: rgba(0, 255, 255, 0.05); border: 2px solid #00ffff; border-radius: 15px;">
+        <div class="welcome-container">
+            <div class="welcome-header">
+                <h2>🚀 Bienvenue sur ERICKRAPPORT v2.1</h2>
+                <p class="welcome-subtitle">Votre solution professionnelle pour la gestion des rapports et suivis de paiements</p>
+            </div>
+            <div class="quick-actions">
+                <h3>⚡ Actions Rapides</h3>
+                <div class="action-buttons">
+                    <button class="menu-btn action-btn" data-page="fusion">
+                        <span class="btn-icon">📁</span>
+                        <span class="btn-text">Commencer une Fusion</span>
+                        <span class="btn-desc">Importer et fusionner des fichiers Excel</span>
+                    </button>
+                    <button class="menu-btn action-btn" data-page="suivi">
+                        <span class="btn-icon">📊</span>
+                        <span class="btn-text">Gérer les Suivis</span>
+                        <span class="btn-desc">Suivre et analyser les paiements</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Tests de navigation
+        function testNavigation() {
+            const results = document.getElementById('test-results');
+            let status = 'success';
+            let message = '✅ Navigation fonctionnelle';
+            
+            try {
+                // Vérifier les boutons de menu
+                const menuButtons = document.querySelectorAll('.menu-btn[data-page]');
+                const returnButton = document.querySelector('.return-btn');
+                
+                if (menuButtons.length === 0) {
+                    status = 'error';
+                    message = '❌ Aucun bouton de menu trouvé';
+                } else if (!returnButton) {
+                    status = 'error';
+                    message = '❌ Bouton retour non trouvé';
+                } else {
+                    message += ` (${menuButtons.length} boutons menu, bouton retour OK)`;
+                }
+            } catch (error) {
+                status = 'error';
+                message = '❌ Erreur lors du test : ' + error.message;
+            }
+            
+            addResult('Navigation', message, status);
+        }
+
+        function testReturnButton() {
+            const results = document.getElementById('test-results');
+            let status = 'success';
+            let message = '✅ Bouton retour fonctionnel';
+            
+            try {
+                const returnButton = document.querySelector('.return-btn');
+                if (!returnButton) {
+                    status = 'error';
+                    message = '❌ Bouton retour non trouvé';
+                } else {
+                    // Vérifier la fonction returnToHome
+                    if (typeof window.erickApp?.returnToHome !== 'function') {
+                        status = 'error';
+                        message = '❌ Fonction returnToHome non définie';
+                    } else {
+                        // Simuler un clic
+                        returnButton.click();
+                        message += ' (clic simulé)';
+                    }
+                }
+            } catch (error) {
+                status = 'error';
+                message = '❌ Erreur lors du test : ' + error.message;
+            }
+            
+            addResult('Bouton Retour', message, status);
+        }
+
+        function testContentLoading() {
+            const results = document.getElementById('test-results');
+            let status = 'success';
+            let message = '✅ Chargement de contenu fonctionnel';
+            
+            try {
+                // Simuler le chargement de contenu
+                const content = document.getElementById('content');
+                if (!content) {
+                    status = 'error';
+                    message = '❌ Élément content non trouvé';
+                } else {
+                    // Simuler le chargement de la page fusion
+                    if (typeof window.erickApp?.loadContent === 'function') {
+                        window.erickApp.loadContent('fusion');
+                        message += ' (page fusion chargée)';
+                    } else {
+                        status = 'error';
+                        message = '❌ Fonction loadContent non définie';
+                    }
+                }
+            } catch (error) {
+                status = 'error';
+                message = '❌ Erreur lors du test : ' + error.message;
+            }
+            
+            addResult('Chargement Contenu', message, status);
+        }
+
+        function addResult(testName, message, status) {
+            const results = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `status ${status}`;
+            resultDiv.innerHTML = `<strong>${testName}:</strong> ${message}`;
+            results.appendChild(resultDiv);
+        }
+
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '<p class="status info">Résultats effacés. Cliquez sur les boutons de test pour recommencer...</p>';
+        }
+
+        // Mise à jour des informations de debug
+        function updateDebugInfo() {
+            document.getElementById('app-status').textContent = 
+                typeof window.erickApp !== 'undefined' ? '✅ Initialisée' : '❌ Non initialisée';
+            
+            document.getElementById('return-function-status').textContent = 
+                typeof window.erickApp?.returnToHome === 'function' ? '✅ Définie' : '❌ Non définie';
+            
+            document.getElementById('load-function-status').textContent = 
+                typeof window.erickApp?.loadHomeContent === 'function' ? '✅ Définie' : '❌ Non définie';
+            
+            document.getElementById('content-element-status').textContent = 
+                document.getElementById('content') ? '✅ Trouvé' : '❌ Non trouvé';
+            
+            const returnButton = document.querySelector('.return-btn');
+            document.getElementById('return-button-status').textContent = 
+                returnButton ? '✅ Trouvé' : '❌ Non trouvé';
+            
+            const eventsAttached = returnButton ? returnButton.hasAttribute('data-event-bound') : false;
+            document.getElementById('events-status').textContent = 
+                eventsAttached ? '✅ Attachés' : '❌ Non attachés';
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page de test chargée');
+            
+            // Attendre que l'application soit initialisée
+            setTimeout(() => {
+                updateDebugInfo();
+                testNavigation();
+                
+                // Ajouter des événements de test
+                const returnButton = document.querySelector('.return-btn');
+                if (returnButton) {
+                    returnButton.addEventListener('click', function() {
+                        console.log('Bouton retour cliqué !');
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = 'status info';
+                        resultDiv.innerHTML = '<strong>Événement :</strong> Bouton retour cliqué à ' + new Date().toLocaleTimeString();
+                        document.getElementById('test-results').appendChild(resultDiv);
+                    });
+                }
+            }, 1000);
+        });
+
+        // Exposer les fonctions de test
+        window.testNavigation = testNavigation;
+        window.testReturnButton = testReturnButton;
+        window.testContentLoading = testContentLoading;
+        window.updateDebugInfo = updateDebugInfo;
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+    "name": "sombiniainaerick/erickrapport",
+    "description": "Application de gestion des rapports et suivis de paiements avec fusion Excel",
+    "type": "application",
+    "license": "MIT",
+    "version": "2.1.0",
+    "autoload": {
+        "psr-4": {
+            "Sombiniainaerick\\Erickrapport\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "SOMBINIAINA Erick",
+            "email": "esombiniaina@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.29"
+    },
+    "keywords": [
+        "excel",
+        "php",
+        "fusion",
+        "rapport",
+        "paiement"
+    ],
+    "minimum-stability": "stable"
+}

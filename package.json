@@ -1,0 +1,22 @@
+{
+  "name": "Erickrapport",
+  "version": "2.1.0",
+  "main": "index-portable.js",
+  "scripts": {
+    "start": "electron .",
+    "start:portable": "electron index-portable.js",
+    "build": "set NODE_OPTIONS=--max-old-space-size=4096 && electron-builder",
+    "build:portable": "set NODE_OPTIONS=--max-old-space-size=4096 && electron-builder --config electron-builder-portable.yml"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Gérer les rapports et les suivis des paiements",
+  "dependencies": {
+    "fs-extra": "^11.3.0"
+  },
+  "devDependencies": {
+    "electron": "^36.4.0",
+    "electron-builder": "^26.0.12"
+  }
+}

@@ -1,0 +1,1313 @@
+/* Harmonisation des boutons dans les formulaires fusion */
+.btns-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    margin: 0 0 2px 0;
+    flex-shrink: 0;
+}
+.btns-row .btn-telecharger,
+.btns-row .btn-fusionner {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+    width: 100%;
+}
+/* 🚀 ERICKRAPPORT - INTERFACE FUTURISTE CYBERPUNK 🚀 */
+/* Inspiré des interfaces gaming et logiciels NSA/CIA */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+/* 🌌 Variables CSS pour le thème cyberpunk */
+:root {
+    --primary-blue: #2563eb;
+    --primary-blue-light: #3b82f6;
+    --primary-blue-dark: #1e40af;
+    --accent-grey: #f3f4f6;
+    --accent-grey-dark: #e5e7eb;
+    --accent-grey-darker: #d1d5db;
+    --white: #fff;
+    --black: #222;
+    --danger-red: #e11d48;
+    --warning-yellow: #facc15;
+    --shadow-main: 0 4px 24px rgba(30,64,175,0.07);
+    --shadow-hover: 0 8px 32px rgba(37,99,235,0.10);
+}
+
+/* 🌐 Fond futuriste avec grille hexagonale animée */
+body {
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    background: var(--accent-grey);
+    color: var(--primary-blue-dark);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
+    animation: none;
+}
+
+/* Animation du fond */
+@keyframes backgroundPulse {
+    0%, 100% { filter: brightness(1) contrast(1); }
+    50% { filter: brightness(1.1) contrast(1.2); }
+}
+
+/* 🔮 Effet de particules flottantes */
+body::before {
+    display: none;
+    opacity: 0.3;
+}
+
+@keyframes particleFloat {
+    0% { transform: translateY(0px) translateX(0px); }
+    33% { transform: translateY(-100px) translateX(100px); }
+    66% { transform: translateY(-200px) translateX(-100px); }
+    100% { transform: translateY(-300px) translateX(200px); }
+}
+
+/* 🏗️ Conteneur principal futuriste */
+.main-container {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 20px;
+    position: relative;
+}
+
+/* 🎮 Sidebar style gaming */
+.sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: linear-gradient(145deg, var(--glass-bg), rgba(0, 255, 255, 0.02));
+    border: 2px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 30px rgba(0, 255, 255, 0.2),
+        0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple), var(--neon-green), var(--neon-orange));
+    border-radius: 15px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar:hover::before {
+    opacity: 0.7;
+    animation: borderGlow 2s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* 🖥️ Zone de contenu style NSA */
+.content-area {
+    flex: 1;
+    background: linear-gradient(145deg, var(--glass-bg), rgba(0, 255, 255, 0.02));
+    border: 2px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 30px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    min-height: 500px;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 30px rgba(0, 255, 255, 0.1),
+        0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.content-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+    animation: scanLine 3s ease-in-out infinite;
+}
+
+@keyframes scanLine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* 📂 Bouton upload compact */
+.btn-telecharger-compact {
+    padding: 6px 10px;
+    background: #2563eb;
+    color: white;
+    border: 1px solid #1e40af;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-telecharger-compact:hover {
+    background: #1e40af;
+}
+
+/* 🎯 Boutons futuristes style gaming */
+.button, .menu-btn, .btn-telecharger, .btn-fusionner, .btn-suivi-paiement {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 15px 25px;
+    margin: 10px 0;
+    background: linear-gradient(145deg, var(--darker-bg), var(--dark-bg));
+    border: 2px solid var(--neon-cyan);
+    border-radius: 8px;
+    color: var(--neon-cyan);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button::before, .menu-btn::before, .btn-telecharger::before, .btn-fusionner::before, .btn-suivi-paiement::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.button:hover, .menu-btn:hover, .btn-telecharger:hover, .btn-fusionner:hover:not(:disabled), .btn-suivi-paiement:hover {
+    color: var(--dark-bg);
+    background: var(--neon-cyan);
+    box-shadow: var(--glow-cyan);
+    transform: translateY(-2px);
+    text-shadow: 0 0 10px var(--dark-bg);
+}
+
+.button:hover::before, .menu-btn:hover::before, .btn-telecharger:hover::before, .btn-fusionner:hover:not(:disabled)::before, .btn-suivi-paiement:hover::before {
+    left: 100%;
+}
+
+/* 🎮 Bouton Fusionner spécial */
+.btn-fusionner {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+}
+
+.btn-fusionner:hover:not(:disabled) {
+    background: var(--neon-green);
+    box-shadow: var(--glow-green);
+}
+
+/* 🔴 Bouton désactivé */
+.btn-fusionner:disabled {
+    border-color: var(--danger-red);
+    color: var(--danger-red);
+    background: var(--darker-bg);
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: 0 0 10px rgba(255, 0, 64, 0.2);
+    animation: disabledPulse 2s ease-in-out infinite;
+}
+
+@keyframes disabledPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.7; }
+}
+
+/* 🎯 Bouton actif */
+.menu-btn.active-btn {
+    background: var(--neon-orange);
+    color: var(--dark-bg);
+    box-shadow: var(--glow-orange);
+    border-color: var(--neon-orange);
+}
+
+/* 🎮 Animation d'activation */
+.btn-fusionner.fusion-enabled {
+    animation: buttonActivation 1s ease-in-out;
+}
+
+@keyframes buttonActivation {
+    0% { 
+        border-color: var(--danger-red);
+        color: var(--danger-red);
+        box-shadow: 0 0 10px rgba(255, 0, 64, 0.2);
+    }
+    50% { 
+        border-color: var(--warning-yellow);
+        color: var(--warning-yellow);
+        box-shadow: 0 0 30px rgba(255, 255, 0, 0.5);
+        transform: scale(1.05);
+    }
+    100% { 
+        border-color: var(--neon-green);
+        color: var(--neon-green);
+        box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+    }
+}
+
+/* 📊 Barre de progression cyberpunk */
+.progress-container {
+    width: 100%;
+    height: 16px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 3px;
+    margin: 2px 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    flex-shrink: 0;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    border-radius: 6px;
+    position: relative;
+    transition: width 0.3s ease;
+    animation: none;
+}
+
+@keyframes progressFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 🔮 Effet de scan sur la barre */
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    animation: progressScan 1.5s ease-in-out infinite;
+    border-radius: 18px;
+}
+
+@keyframes progressScan {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* 💬 Texte de progression futuriste */
+#progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #374151;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    font-weight: 600;
+    font-size: 9px;
+    text-shadow: none;
+    z-index: 10;
+    margin: 0;
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* 🎯 Headers futuristes */
+header {
+    text-align: center;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+header h1 {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.3em;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 3px 0;
+    text-shadow: var(--glow-cyan);
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% { 
+        text-shadow: var(--glow-cyan);
+        transform: scale(1);
+    }
+    50% { 
+        text-shadow: 
+            0 0 30px var(--neon-cyan), 
+            0 0 60px var(--neon-cyan), 
+            0 0 90px var(--neon-cyan);
+        transform: scale(1.02);
+    }
+}
+
+/* 🔥 Footer cyberpunk */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(145deg, var(--darker-bg), var(--dark-bg));
+    border-top: 2px solid var(--neon-cyan);
+    padding: 15px 0;
+    text-align: center;
+    font-family: 'Rajdhani', monospace;
+    color: var(--neon-cyan);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.footer p {
+    margin: 5px 0;
+    font-size: 14px;
+    text-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* 🔗 Liens sociaux futuristes */
+.social-icon {
+    color: var(--neon-cyan);
+    text-decoration: none;
+    font-weight: 600;
+    margin: 0 15px;
+    padding: 8px 15px;
+    border: 1px solid var(--neon-cyan);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.social-icon:hover {
+    background: var(--neon-cyan);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px var(--neon-cyan);
+    transform: translateY(-2px);
+}
+
+/* 🚨 Alertes style NSA */
+#custom-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    background: linear-gradient(145deg, var(--darker-bg), var(--dark-bg));
+    border: 2px solid var(--neon-green);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 
+        0 0 50px rgba(57, 255, 20, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    text-align: center;
+    min-width: 400px;
+    backdrop-filter: blur(20px);
+    animation: alertAppear 0.5s ease-out;
+}
+
+@keyframes alertAppear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.alert-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.checkmark {
+    font-size: 40px;
+    color: var(--neon-green);
+    text-shadow: var(--glow-green);
+    animation: checkmarkPulse 2s ease-in-out infinite;
+}
+
+@keyframes checkmarkPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.alert-content p {
+    color: var(--neon-cyan);
+    font-family: 'Rajdhani', monospace;
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.alert-content button {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    padding: 12px 25px;
+    background: var(--darker-bg);
+    border: 2px solid var(--neon-green);
+    border-radius: 8px;
+    color: var(--neon-green);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.alert-content button:hover {
+    background: var(--neon-green);
+    color: var(--dark-bg);
+    box-shadow: var(--glow-green);
+}
+
+/* 📱 Responsive futuriste */
+@media screen and (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    header h1 {
+        font-size: 1.8em;
+    }
+    
+    .progress-container {
+        height: 35px;
+    }
+    
+    #progress-text {
+        font-size: 12px;
+    }
+}
+
+/* 🎮 Animations d'entrée */
+.body-index {
+    animation: pageLoad 1s ease-out;
+}
+
+@keyframes pageLoad {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 🔮 Effet de survol sur les conteneurs */
+.container {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 4px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 30px rgba(0, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.container:hover {
+    border-color: var(--neon-cyan);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 40px rgba(0, 255, 255, 0.3);
+}
+
+/* 📝 Formulaires futuristes */
+input[type="file"], label {
+    font-family: 'Rajdhani', monospace;
+    color: var(--neon-cyan);
+    font-size: 16px;
+}
+
+input[type="file"] {
+    background: var(--darker-bg);
+    border: 2px solid var(--neon-cyan);
+    border-radius: 8px;
+    padding: 10px;
+    color: var(--neon-cyan);
+    width: 100%;
+    margin: 10px 0;
+}
+
+input[type="file"]:focus {
+    outline: none;
+    box-shadow: var(--glow-cyan);
+}
+
+/* 📝 Formulaire de paramètres du rapport */
+.form-section {
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    border: 1.5px solid #d1d5db;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 1px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    flex-shrink: 0;
+}
+
+.form-section h3 {
+    color: #1e40af;
+    margin: 0 0 5px 0;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.form-group {
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 2px;
+    font-size: 9px;
+}
+
+.form-group input[type="text"],
+.form-group select {
+    padding: 3px 5px;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    font-size: 9px;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    color: #111827;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.form-group input[type="text"]:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    background-color: #f0f9ff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group input[type="text"]:hover,
+.form-group select:hover {
+    border-color: #9ca3af;
+}
+
+/* 🎯 Indicateur de chargement */
+.loading-spinner {
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+    0%, 100% { 
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+/* 🌟 Effets spéciaux pour les éléments actifs */
+.success-icon, .echec-icon {
+    animation: iconGlow 1s ease-in-out infinite;
+}
+
+@keyframes iconGlow {
+    0%, 100% { 
+        filter: brightness(1);
+        transform: scale(1);
+    }
+    50% { 
+        filter: brightness(1.5);
+        transform: scale(1.1);
+    }
+}
+
+/* 🎮 Style pour les éléments de navigation */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    margin: 30px 0;
+    animation: hrGlow 3s ease-in-out infinite;
+}
+
+@keyframes hrGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* 🔥 Effet de matrix sur le fond */
+body.body-import::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(0deg, transparent 24%, rgba(0, 255, 255, 0.05) 25%, rgba(0, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 255, 0.05) 75%, rgba(0, 255, 255, 0.05) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, rgba(0, 255, 255, 0.05) 25%, rgba(0, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 255, 0.05) 75%, rgba(0, 255, 255, 0.05) 76%, transparent 77%, transparent);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -2;
+    animation: matrixMove 20s linear infinite;
+}
+
+@keyframes matrixMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
+/* ✨ Améliorations UI/UX modernes */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+}
+
+.form-grid .form-group {
+    margin-bottom: 0;
+}
+
+.helper-text {
+    display: none;
+}
+
+.progress-details {
+    margin-top: 2px;
+    padding: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #e5e7eb;
+    max-height: 200px;
+    min-height: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.progress-steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+    margin: 0 0 2px 0;
+    padding: 0;
+    list-style: none;
+    flex-shrink: 0;
+}
+
+.progress-steps li {
+    padding: 2px 3px;
+    border-radius: 3px;
+    font-size: 7px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.progress-steps li.active {
+    background: #dbeafe;
+    border-color: #93c5fd;
+    color: #1d4ed8;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.15);
+}
+
+.progress-steps li.done {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #166534;
+}
+
+.progress-log {
+    max-height: none;
+    flex: 1;
+    overflow: auto;
+    padding: 3px;
+    border-radius: 3px;
+    background: #fafbfc;
+    border: 1px dashed #d1d5db;
+    font-size: 7px;
+    color: #4b5563;
+    line-height: 1.1;
+}
+
+.progress-log p {
+    margin: 0 0 1px 0;
+}
+
+.progress-log p:last-child {
+    margin-bottom: 0;
+}
+
+.params-toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.params-search {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.params-search:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.params-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1f2937;
+    background: #e5e7eb;
+    padding: 6px 8px;
+    border-radius: 999px;
+}
+
+.item.is-hidden {
+    display: none;
+}
+
+.item-name .highlight {
+    background: #fde68a;
+    padding: 0 2px;
+    border-radius: 3px;
+}
+
+@media screen and (max-width: 900px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ✅ Popup choix après fusion */
+.fusion-choice-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10050;
+    backdrop-filter: blur(2px);
+}
+
+.fusion-choice-modal {
+    background: linear-gradient(145deg, var(--darker-bg), var(--dark-bg));
+    border: 2px solid var(--neon-cyan);
+    border-radius: 12px;
+    padding: 20px;
+    width: min(520px, 90vw);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.25);
+    text-align: center;
+}
+
+.fusion-choice-modal h3 {
+    margin: 0 0 8px 0;
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.fusion-choice-modal p {
+    margin: 0 0 16px 0;
+    color: #e5e7eb;
+    font-size: 14px;
+}
+
+.fusion-choice-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.btn-choice {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 2px solid var(--neon-cyan);
+    background: var(--darker-bg);
+    color: var(--neon-cyan);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 200px;
+}
+
+.btn-choice:hover {
+    background: var(--neon-cyan);
+    color: var(--dark-bg);
+    box-shadow: var(--glow-cyan);
+}
+
+.btn-choice.btn-add {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+}
+
+.btn-choice.btn-add:hover {
+    background: var(--neon-green);
+    box-shadow: var(--glow-green);
+    color: var(--dark-bg);
+}
+
+.btn-choice.btn-finish {
+    border-color: var(--neon-orange);
+    color: var(--neon-orange);
+}
+
+.btn-choice.btn-finish:hover {
+    background: var(--neon-orange);
+    box-shadow: var(--glow-orange);
+    color: var(--dark-bg);
+}
+
+.btn-choice.btn-close {
+    border-color: var(--accent-grey-darker);
+    color: #e5e7eb;
+    min-width: 120px;
+}
+
+.btn-choice.btn-close:hover {
+    background: var(--accent-grey-darker);
+    color: var(--dark-bg);
+    box-shadow: none;
+}
+
+/* ========================================
+   📱 RESPONSIVITÉ - MOBILE & TABLET
+   ======================================== */
+
+/* 🔧 Tablettes (600px - 899px) */
+@media screen and (min-width: 600px) and (max-width: 899px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .main-container {
+        flex-direction: row;
+    }
+    
+    .sidebar {
+        width: 35%;
+        min-width: 250px;
+    }
+    
+    .content {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    header h1 {
+        font-size: 2em;
+    }
+    
+    .btn-telecharger, .btn-fusionner, button {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 8px 6px;
+    }
+}
+
+/* 📱 Mobiles petits (jusqu'à 599px) */
+@media screen and (max-width: 599px) {
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-size: 13px;
+        padding: 0;
+    }
+    
+    header {
+        padding: 12px 10px;
+    }
+    
+    header h1 {
+        font-size: 1.4em;
+        margin: 5px 0;
+    }
+    
+    .main-container {
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .sidebar {
+        width: 100%;
+        margin: 0;
+        padding: 10px;
+        border-radius: 0;
+        margin-bottom: 10px;
+    }
+    
+    .sidebar button {
+        width: 100%;
+        padding: 12px;
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .content {
+        flex: 1;
+        padding: 10px;
+        min-width: 0;
+    }
+    
+    .container {
+        padding: 10px;
+        border-radius: 6px;
+    }
+    
+    /* Formulaires responsive */
+    .form-grid, .tab-buttons, .tabs-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-grid input, 
+    .form-grid select, 
+    .form-grid textarea {
+        width: 100%;
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    /* Boutons responsive */
+    button, .btn-telecharger, .btn-fusionner, .btn-delete, .btn-download {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .btns-row {
+        flex-direction: column;
+        gap: 6px;
+        margin: 6px 0;
+    }
+    
+    .btns-row button {
+        width: 100%;
+    }
+    
+    /* Tables responsive */
+    table {
+        font-size: 11px;
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    th, td {
+        padding: 6px 4px;
+        text-align: left;
+    }
+    
+    th {
+        font-size: 10px;
+        padding: 6px 4px;
+    }
+    
+    /* Cache les colonnes moins importantes sur mobile */
+    table tr td:nth-child(4),
+    table tr th:nth-child(4) {
+        display: none;
+    }
+    
+    /* Onglets */
+    .tab-button {
+        flex: 1;
+        padding: 8px 6px;
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .canevas-tabs {
+        flex-wrap: wrap;
+    }
+    
+    /* Modals */
+    .deleteModal, #deleteModal, #deleteRapportModal {
+        padding: 15px;
+    }
+    
+    .deleteModal div, #deleteModal div, #deleteRapportModal div {
+        max-width: 90vw;
+        padding: 20px;
+    }
+    
+    .deleteModal h2, #deleteModal h2, #deleteRapportModal h2 {
+        font-size: 16px;
+    }
+    
+    /* Grille de paramètres */
+    .params-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .param-card {
+        padding: 12px;
+        max-height: 60vh;
+    }
+    
+    .param-card h3 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    /* Barre de progression */
+    .progress-container {
+        height: 30px;
+        margin: 8px 0;
+    }
+    
+    #progress-text {
+        font-size: 11px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+    }
+    
+    /* Messages d'alerte */
+    .alert {
+        padding: 10px;
+        font-size: 12px;
+        margin: 6px 0;
+    }
+    
+    /* Fusion choice modal */
+    .fusion-choice-modal {
+        width: 90vw;
+        padding: 15px;
+    }
+    
+    .fusion-choice-modal h3 {
+        font-size: 14px;
+    }
+    
+    .fusion-choice-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn-choice {
+        width: 100%;
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    /* Ajuste les espacements */
+    .container-import, .container {
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    /* Scroll horizontal pour tableaux */
+    .canevas-content, .conclusions-content {
+        overflow-x: auto;
+        max-height: 50vh;
+    }
+}
+
+/* ⬆️ Grands écrans (1200px+) */
+@media screen and (min-width: 1200px) {
+    body {
+        font-size: 15px;
+    }
+    
+    .main-container {
+        padding: 20px;
+    }
+    
+    .sidebar {
+        width: 280px;
+    }
+    
+    .container {
+        padding: 25px;
+    }
+    
+    button, .btn-telecharger, .btn-fusionner {
+        padding: 12px 18px;
+        font-size: 14px;
+    }
+    
+    .form-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+    
+    table {
+        font-size: 13px;
+    }
+    
+    th, td {
+        padding: 12px;
+    }
+}
+
+/* 🎨 Orientation paysage mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    header h1 {
+        font-size: 1.2em;
+        margin: 5px 0;
+    }
+    
+    .sidebar {
+        height: auto;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    
+    .container {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    button {
+        padding: 8px 12px;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+}
+
+/* ⚡ Optimisation tactile */
+@media (hover: none) and (pointer: coarse) {
+    button, a, .btn-delete, input[type="button"], input[type="submit"] {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px;
+    }
+    
+    button:active {
+        transform: scale(0.98);
+    }
+}
+
+/* 🖥️ Écrans de très haute résolution */
+@media screen and (min-width: 2560px) {
+    body {
+        font-size: 18px;
+    }
+    
+    header h1 {
+        font-size: 3em;
+    }
+    
+    button {
+        padding: 15px 25px;
+        font-size: 16px;
+    }
+    
+    .sidebar {
+        width: 350px;
+    }
+}
