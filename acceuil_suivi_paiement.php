@@ -65,10 +65,11 @@
         <div id="message-container"></div>
     </div>
 
-<script src="js/common.js"></script>
 <script>
 // Charger les activités et communes pour le formulaire de canevas
-document.addEventListener('DOMContentLoaded', function() {
+// Note: Page chargée via AJAX, utiliser plutôt chargerActivitesFiltre() ou appeler directement
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
     fetch('api_get_params.php')
         .then(response => response.json())
         .then(data => {
@@ -123,7 +124,54 @@ document.addEventListener('DOMContentLoaded', function() {
             messageDiv.innerHTML = '<span style="color: red;">❌ Erreur: ' + error.message + '</span>';
         });
     });
-});
+    });
+} else {
+    // Content already loaded, execute immediately
+    fetch('api_get_params.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const terroirs = data.terroirs || [];
+                const communes = data.communes || [];
+                const activites = data.activites || [];
+                const params = data.params || {};
+                
+                const activitesSelect = document.getElementById('activite-suivi');
+                const communesSelect = document.getElementById('commune-suivi');
+                const terroirsSelect = document.getElementById('terroir-suivi');
+                
+                if (terroirsSelect) {
+                    terroirsSelect.innerHTML = '<option value="">-- Sélectionner un terroir --</option>';
+                    terroirs.forEach(t => {
+                        const option = document.createElement('option');
+                        option.value = t.id;
+                        option.textContent = t.nom;
+                        terroirsSelect.appendChild(option);
+                    });
+                }
+                
+                if (activitesSelect) {
+                    activitesSelect.innerHTML = '<option value="">-- Sélectionner une activité --</option>';
+                    activites.forEach(a => {
+                        const option = document.createElement('option');
+                        option.value = a.id;
+                        option.textContent = a.nom;
+                        activitesSelect.appendChild(option);
+                    });
+                }
+                
+                if (communesSelect) {
+                    communesSelect.innerHTML = '<option value="">-- Sélectionner une commune --</option>';
+                    communes.forEach(c => {
+                        const option = document.createElement('option');
+                        option.value = c.id;
+                        option.textContent = c.nom;
+                        communesSelect.appendChild(option);
+                    });
+                }
+            }
+        });
+}
 </script>
 
 </body>

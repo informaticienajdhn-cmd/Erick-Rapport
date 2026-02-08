@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rapports Enregistrés</title>
     <link rel="stylesheet" href="styles.css?v=<?php echo time(); ?>">
-    <script src="js/common.js"></script>
 </head>
 <body class="body-import">
     <header>
         <h1>📁 RAPPORTS ENREGISTRÉS</h1>
     </header>
     <div class="container">
+        <div style="margin-top: 20px; margin-bottom: 20px; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+            <label for="filtre-activite" style="font-weight: 600; margin-right: 10px;">Filtrer par Activité:</label>
+            <select id="filtre-activite" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; cursor: pointer;">
+                <option value="">-- Tous les rapports --</option>
+            </select>
+        </div>
+        
         <div id="rapports-list" style="margin-top: 20px; max-height: 600px; overflow-y: auto; padding-right: 10px;">
             <p style="text-align: center; color: #6b7280;">Chargement...</p>
         </div>

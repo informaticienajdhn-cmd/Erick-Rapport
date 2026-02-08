@@ -13,14 +13,36 @@ try {
 
     switch ($action) {
         case 'list':
-            // Lister tous les rapports
-            $stmt = $db->getConnection()->query("
+            // Lister tous les rapports avec filtrage optionnel par activité
+            $activite_id = isset($_GET['activite_id']) && !empty($_GET['activite_id']) ? intval($_GET['activite_id']) : null;
+            
+            $query = "
                 SELECT r.id, r.nom, r.commune_id, r.activite_id, c.nom AS commune, a.nom AS activite, r.created_at
                 FROM rapports_enregistres r
                 LEFT JOIN communes c ON r.commune_id = c.id
                 LEFT JOIN activites a ON r.activite_id = a.id
-                ORDER BY r.created_at DESC
-            ");
+            ";
+            
+            if ($activite_id) {
+                $query .= " WHERE r.activite_id = :activite_id";
+            }
+            
+            $query .= " ORDER BY r.created_at DESC";
+            
+            $stmt = $db->getConnection()->prepare($query);
+            
+            if ($activite_id) {
+                $stmt->execute([':activite_id' => $activite_id]);
+            } else {
+                $stmt->execute();
+            }
+            
+            echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            break;
+
+        case 'activites':
+            // Récupérer la liste de toutes les activités
+            $stmt = $db->getConnection()->query("SELECT id, nom FROM activites ORDER BY nom");
             echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
             break;
 

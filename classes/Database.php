@@ -9,6 +9,24 @@ class Database
     private static $instance = null;
     private $db;
     private $dbPath;
+    
+    /**
+     * Valide un nom de table : permet uniquement alphanumérique et underscore
+     * et vérifie que la table existe dans sqlite_master.
+     */
+    private function validateTableName($table)
+    {
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+            throw new Exception("Nom de table invalide");
+        }
+
+        $stmt = $this->db->prepare("SELECT name FROM sqlite_master WHERE type='table' AND name = :table");
+        $stmt->execute(['table' => $table]);
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$res) {
+            throw new Exception("Table inconnue: " . $table);
+        }
+    }
 
     private function __construct()
     {
@@ -125,30 +143,35 @@ class Database
 
     public function getAll($table)
     {
+        $this->validateTableName($table);
         $stmt = $this->db->query("SELECT * FROM {$table} ORDER BY nom ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function add($table, $nom)
     {
+        $this->validateTableName($table);
         $stmt = $this->db->prepare("INSERT INTO {$table} (nom) VALUES (:nom)");
         return $stmt->execute(['nom' => $nom]);
     }
 
     public function update($table, $id, $nom)
     {
+        $this->validateTableName($table);
         $stmt = $this->db->prepare("UPDATE {$table} SET nom = :nom WHERE id = :id");
         return $stmt->execute(['nom' => $nom, 'id' => $id]);
     }
 
     public function delete($table, $id)
     {
+        $this->validateTableName($table);
         $stmt = $this->db->prepare("DELETE FROM {$table} WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
 
     public function exists($table, $nom, $excludeId = null)
     {
+        $this->validateTableName($table);
         if ($excludeId) {
             $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$table} WHERE nom = :nom AND id != :id");
             $stmt->execute(['nom' => $nom, 'id' => $excludeId]);

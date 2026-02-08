@@ -29,6 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $nom = sanitize_input($_POST['nom'] ?? '');
     $id = $_POST['id'] ?? null;
 
+    // Valider le paramètre table côté serveur pour éviter injection via nom de table
+    if ($table !== '' && !preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+        echo json_encode(['success' => false, 'error' => 'Paramètre table invalide.']);
+        exit;
+    }
+
     try {
         switch ($action) {
             case 'add':

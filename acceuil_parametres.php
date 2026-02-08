@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paramètres</title>
     <link rel="stylesheet" href="styles.css?v=<?php echo time(); ?>">
-    <script src="js/common.js"></script>
     
     <!-- Styles responsive pour les formulaires -->
     <style>

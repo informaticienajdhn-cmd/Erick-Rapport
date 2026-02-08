@@ -995,7 +995,10 @@ class ErickRapportApp {
                 window.erickApp = new ErickRapportApp();
                 // Ajout explicite pour garantir la détection des formulaires
                 window.erickApp.reinitializeAfterContentLoad();
-                // Charger les rapports si la page les affiche
+                // Charger les rapports et les activités si la page les affiche
+                if (typeof window.chargerActivitesFiltre === 'function') {
+                    window.chargerActivitesFiltre();
+                }
                 if (typeof window.chargerRapports === 'function') {
                     window.chargerRapports();
                 }
@@ -1281,9 +1284,61 @@ function loadContent(page) {
 // 📁 RAPPORTS - Chargement dynamique
 // =====================================================
 
-window.chargerRapports = async function() {
+// Charger la liste des activités et remplir le sélecteur
+window.chargerActivitesFiltre = async function() {
     try {
-        const response = await fetch('api_rapports.php?action=list');
+        // Attendre que l'élément soit disponible
+        let selectDiv = document.getElementById('filtre-activite');
+        let attempts = 0;
+        while (!selectDiv && attempts < 50) {
+            await new Promise(resolve => setTimeout(resolve, 10));
+            selectDiv = document.getElementById('filtre-activite');
+            attempts++;
+        }
+        
+        if (!selectDiv) {
+            console.warn('Élément #filtre-activite non trouvé après 500ms');
+            return;
+        }
+        
+        console.log('Chargement des activités...');
+        
+        const response = await fetch('api_rapports.php?action=activites');
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        const activites = await response.json();
+        
+        console.log('Activités reçues:', activites);
+        
+        // Garder l'option par défaut
+        let html = '<option value="">-- Tous les rapports --</option>';
+        
+        activites.forEach(activite => {
+            html += `<option value="${activite.id}">${activite.nom}</option>`;
+        });
+        
+        selectDiv.innerHTML = html;
+        console.log('Filtre d\'activités rempli avec', activites.length, 'activités');
+        
+        // Ajouter l'écouteur d'événement pour le changement de filtre
+        selectDiv.addEventListener('change', function() {
+            console.log('Filtrage par activité:', this.value);
+            window.chargerRapports(this.value);
+        });
+    } catch (error) {
+        console.error('Erreur lors du chargement des activités:', error);
+    }
+};
+
+window.chargerRapports = async function(activiteId = '') {
+    try {
+        let url = 'api_rapports.php?action=list';
+        if (activiteId) {
+            url += '&activite_id=' + activiteId;
+        }
+        
+        const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
@@ -1347,7 +1402,10 @@ window.renommerRapport = function(id, nomActuel) {
         .then(data => {
             if (data.success) {
                 alert('Rapport renommé avec succès!');
-                window.chargerRapports();
+                // Recharger avec le filtre actuel
+                const selectDiv = document.getElementById('filtre-activite');
+                const activiteId = selectDiv ? selectDiv.value : '';
+                window.chargerRapports(activiteId);
             } else {
                 alert('Erreur: ' + data.error);
             }
@@ -1417,7 +1475,10 @@ window.supprimerRapport = function(id) {
         .then(data => {
             if (data.success) {
                 alert('Rapport supprimé avec succès!');
-                window.chargerRapports();
+                // Recharger avec le filtre actuel
+                const selectDiv = document.getElementById('filtre-activite');
+                const activiteId = selectDiv ? selectDiv.value : '';
+                window.chargerRapports(activiteId);
             } else {
                 alert('Erreur: ' + data.error);
             }

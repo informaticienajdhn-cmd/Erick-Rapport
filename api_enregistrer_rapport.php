@@ -9,8 +9,101 @@ require_once 'classes/Database.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 header('Content-Type: application/json; charset=utf-8');
+
+/**
+ * Injecte la date dans le canevas/conclusion
+ * @param string $tempFilePath chemin du fichier temporaire
+ * @param bool $isPageGarde true pour page de garde, false pour conclusion
+ */
+function injectDateInFile($tempFilePath, $isPageGarde = true) {
+    try {
+        $spreadsheet = IOFactory::load($tempFilePath);
+        
+        $dateFormatShort = date('d/m/y');   // 05/02/26
+        $dateFormatLong = date('d/m/Y');    // 05/02/2026
+        $dateWithLabel = 'Date, ' . $dateFormatLong;
+        
+        if ($isPageGarde) {
+            // Page de garde: cellules D51:I51 de la 1ère feuille, Arial Black 16
+            if ($spreadsheet->getSheetCount() >= 1) {
+                $sheet = $spreadsheet->getSheet(0);
+                
+                // Fusionner si pas déjà fusionné
+                try {
+                    $sheet->mergeCells('D51:I51');
+                } catch (Exception $e) {
+                    // Déjà fusionné, continuer
+                }
+                
+                $sheet->setCellValue('D51', $dateFormatShort);
+                $sheet->getStyle('D51:I51')->applyFromArray([
+                    'font' => [
+                        'name' => 'Arial Black',
+                        'size' => 16,
+                        'bold' => true,
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+            
+            // Chercher et injecter la date dans la feuille "RECAP TECHN" à C38
+            foreach ($spreadsheet->getAllSheets() as $sheet) {
+                if (strtoupper($sheet->getTitle()) === 'RECAP TECHN') {
+                    $sheet->setCellValue('C38', $dateWithLabel);
+                    $sheet->getStyle('C38')->applyFromArray([
+                        'font' => [
+                            'name' => 'Arial',
+                            'size' => 11,
+                        ],
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_LEFT,
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                        ],
+                    ]);
+                    
+                    // Ajuster la largeur des colonnes C et D à 82 pixels
+                    $sheet->getColumnDimension('C')->setWidth(82 / 7); // conversion pixels en unités Excel
+                    $sheet->getColumnDimension('D')->setWidth(82 / 7); // conversion pixels en unités Excel
+                    break;
+                }
+            }
+        } else {
+            // Conclusion: cellule C38, format RECAP FIN
+            // Utiliser la 3ème feuille si elle existe, sinon utiliser la dernière feuille disponible
+            $sheetCount = $spreadsheet->getSheetCount();
+            if ($sheetCount >= 1) {
+                $targetIndex = min(2, $sheetCount - 1); // index 2 = 3ème feuille, fallback sur la dernière
+                $sheet = $spreadsheet->getSheet($targetIndex);
+
+                $sheet->setCellValue('C38', $dateWithLabel);
+                $sheet->getStyle('C38')->applyFromArray([
+                    'font' => [
+                        'name' => 'Arial',
+                        'size' => 11,
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_LEFT,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+        }
+        
+        // Sauvegarder les modifications
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save($tempFilePath);
+        
+    } catch (Exception $e) {
+        // Log l'erreur mais continue (dates non injectées)
+        file_put_contents(__DIR__.'/logs/debug_fusion.txt', "[".date('Y-m-d H:i:s')."] Erreur injection date: ".$e->getMessage()."\n", FILE_APPEND);
+    }
+}
 
 try {
     // Lire les données de fusion depuis le fichier temporaire
@@ -77,6 +170,10 @@ try {
         if ($canevas) {
             $tempCanevas = TEMP_DIR . DIRECTORY_SEPARATOR . 'canevas_' . uniqid() . '.xlsx';
             file_put_contents($tempCanevas, $canevas['fichier']);
+            
+            // ✅ INJECTER LA DATE DANS LA PAGE DE GARDE
+            injectDateInFile($tempCanevas, true);
+            
             $tempFilesToCleanup[] = $tempCanevas;
             $filesToMerge[] = $tempCanevas;
             file_put_contents(__DIR__.'/logs/debug_fusion.txt', "[".date('Y-m-d H:i:s')."] Page de garde ajoutée: ".$canevas['nom_fichier']."\n", FILE_APPEND);
@@ -96,6 +193,8 @@ try {
         if ($conclusion) {
             $tempConclusion = TEMP_DIR . DIRECTORY_SEPARATOR . 'conclusion_' . uniqid() . '.xlsx';
             file_put_contents($tempConclusion, $conclusion['fichier']);
+            
+            // Ne pas injecter la date dans la conclusion — seules les pages de garde reçoivent la date
             $tempFilesToCleanup[] = $tempConclusion;
             $filesToMerge[] = $tempConclusion;
             file_put_contents(__DIR__.'/logs/debug_fusion.txt', "[".date('Y-m-d H:i:s')."] Conclusion ajoutée: ".$conclusion['nom_fichier']."\n", FILE_APPEND);

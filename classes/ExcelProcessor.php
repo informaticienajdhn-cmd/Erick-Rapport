@@ -80,6 +80,7 @@ class ExcelProcessor
 
             $rowIndex = 1;
             $headerRows = null;
+            $fileCounter = 1; // Compteur pour "Fichier 1", "Fichier 2", etc.
 
             // Fusion des fichiers avec mise à jour progressive
             foreach ($fileList as $index => $file) {
@@ -113,6 +114,10 @@ class ExcelProcessor
                     // Sauvegarde des en-têtes du premier fichier
                     if ($headerRows === null && count($data) >= 5) {
                         $headerRows = array_slice($data, 0, 5);
+                        // Ajouter un en-tête pour la colonne fichier source (colonne 0)
+                        foreach ($headerRows as &$headerRow) {
+                            array_unshift($headerRow, 'Source');
+                        }
                     }
 
                     // Suppression des lignes d'en-tête sauf pour le premier fichier
@@ -128,8 +133,9 @@ class ExcelProcessor
                     $totalRows = count($data);
                     foreach ($data as $rowIdx => $row) {
                         if (!empty(array_filter($row))) {
-                            // Ajout du nom du fichier source dans la dernière colonne
-                            $row[] = $file;
+                            // Ajouter le numéro du fichier source AU DÉBUT (colonne 0)
+                            array_unshift($row, 'Fichier ' . $fileCounter);
+                            
                             $fusionSheet->fromArray($row, null, 'A' . $rowIndex);
                             $rowIndex++;
                             
@@ -147,9 +153,11 @@ class ExcelProcessor
 
                 } catch (Exception $e) {
                     ErrorHandler::logError("Erreur lors du traitement du fichier $file: " . $e->getMessage());
-                    // Continuer avec les autres fichiers
+                    $fileCounter++; // Incrémenter même en cas d'erreur
                     continue;
                 }
+                
+                $fileCounter++; // Incrémenter le compteur pour le prochain fichier
             }
 
             // Vérification que la fusion a bien été réalisée
@@ -260,20 +268,22 @@ class ExcelProcessor
         $data = $fusionSheet->toArray();
         $totalRows = count($data);
         
-        foreach ($data as $index => $row) {
-            if ($index < 5) continue; // Ignorer les en-têtes
+        foreach ($data as $excelRowIndex => $row) {
+            if ($excelRowIndex < 5) continue; // Ignorer les en-têtes
             
             // Mise à jour progressive du tri (moins fréquente)
-            if ($index % 200 === 0) {
-                $progress = 76 + (($index / $totalRows) * 2);
-                $this->updateProgress($progress, "Tri des données: ligne $index/$totalRows");
+            if ($excelRowIndex % 200 === 0) {
+                $progress = 76 + (($excelRowIndex / $totalRows) * 2);
+                $this->updateProgress($progress, "Tri des données: ligne $excelRowIndex/$totalRows");
             }
 
-            if (isset($row[11])) {
-                if ($row[11] === '‌Payé en totalité') {
+            // La colonne 0 contient maintenant "Fichier 1", "Fichier 2", etc.
+            // Tous les indices sont décalés de 1 (colonne 0 = fichier source, colonne 1 = ancien col 0, etc.)
+            if (isset($row[12])) { // Colonne de statut (anciennement 11, maintenant 12)
+                if ($row[12] === '‌Payé en totalité') {
                     $payerData[] = $row;
-                } elseif ($row[11] === '‌Non payé' || $row[11] === 'A Payer') {
-                    $row[11] = '‌Non payé';
+                } elseif ($row[12] === '‌Non payé' || $row[12] === 'A Payer') {
+                    $row[12] = '‌Non payé';
                     $npData[] = $row;
                 }
             }
@@ -308,61 +318,170 @@ class ExcelProcessor
 
     /**
      * Gère les doublons de Fokontany
+     * La colonne 0 contient "Fichier 1", "Fichier 2", etc.
+     * La colonne 9 contient le fokontany (décalé de 1 depuis la fusion)
+     * 
+     * Logique :
+     * 1. D'abord unifier : renommer tous les fokontany minoritaires vers le majoritaire du MÊME fichier
+     * 2. Ensuite identifier les doublons : parmi les unifiés, voir lesquels existent dans plusieurs fichiers
+     * 3. Ajouter suffixes romains : seulement à ceux qui existent dans plusieurs fichiers
      */
     private function handleDuplicateFokontany(&$payerData, &$npData)
     {
         $allData = array_merge($payerData, $npData);
-        $fokontanyFiles = [];
-
-        // Identifier les fokontany présents dans plusieurs fichiers
+        
+        // Étape 1 : Identifier le fokontany majoritaire par fichier
+        $fokontanyFileStats = []; // [fokontany][fichier] = count
+        $fileStats = [];           // [fichier][fokontany] = count
+        
         foreach ($allData as $row) {
-            $fokontany = trim($row[8]);
-            $file = isset($row[13]) ? $row[13] : 'inconnu';
+            $fokontany = isset($row[9]) ? trim($row[9]) : '';
+            $fileSource = isset($row[0]) ? trim($row[0]) : 'Fichier inconnu';
+            
             if (!empty($fokontany)) {
-                $fokontanyFiles[$fokontany][$file] = true;
+                if (!isset($fokontanyFileStats[$fokontany])) {
+                    $fokontanyFileStats[$fokontany] = [];
+                }
+                if (!isset($fokontanyFileStats[$fokontany][$fileSource])) {
+                    $fokontanyFileStats[$fokontany][$fileSource] = 0;
+                }
+                $fokontanyFileStats[$fokontany][$fileSource]++;
+                
+                if (!isset($fileStats[$fileSource])) {
+                    $fileStats[$fileSource] = [];
+                }
+                if (!isset($fileStats[$fileSource][$fokontany])) {
+                    $fileStats[$fileSource][$fokontany] = 0;
+                }
+                $fileStats[$fileSource][$fokontany]++;
             }
         }
-
-        $fokontanyToRename = array_filter($fokontanyFiles, function($files) {
-            return count($files) > 1;
-        });
-
-        // Renommer les doublons
+        
+        // Identifier le fokontany majoritaire pour chaque fichier
+        $majorityFokontanyByFile = [];
+        foreach ($fileStats as $file => $fokontanyCounts) {
+            arsort($fokontanyCounts);
+            $majorityFokontanyByFile[$file] = key($fokontanyCounts);
+        }
+        
+        // Étape 2 : Unifier les fokontany minoritaires vers le majoritaire du MÊME fichier
+        $this->unifyMinorityToMajority($payerData, $majorityFokontanyByFile);
+        $this->unifyMinorityToMajority($npData, $majorityFokontanyByFile);
+        
+        // Étape 3 : Recalculer les statistiques après unification
+        $allDataAfterUnification = array_merge($payerData, $npData);
+        $fokontanyFilesAfterUnification = [];
+        
+        foreach ($allDataAfterUnification as $row) {
+            $fokontany = isset($row[9]) ? trim($row[9]) : '';
+            $fileSource = isset($row[0]) ? trim($row[0]) : 'Fichier inconnu';
+            
+            if (!empty($fokontany)) {
+                if (!isset($fokontanyFilesAfterUnification[$fokontany])) {
+                    $fokontanyFilesAfterUnification[$fokontany] = [];
+                }
+                if (!in_array($fileSource, $fokontanyFilesAfterUnification[$fokontany])) {
+                    $fokontanyFilesAfterUnification[$fokontany][] = $fileSource;
+                }
+            }
+        }
+        
+        // Étape 4 : Identifier les fokontany qui existent dans plusieurs fichiers APRÈS unification
+        $fokontanyToRename = [];
+        foreach ($fokontanyFilesAfterUnification as $fokontany => $files) {
+            if (count($files) > 1) {
+                $fokontanyToRename[$fokontany] = $files;
+            }
+        }
+        
+        // Étape 5 : Ajouter les suffixes romains SEULEMENT aux fokontany présents dans plusieurs fichiers
         $this->renameDuplicateFokontany($payerData, $fokontanyToRename);
         $this->renameDuplicateFokontany($npData, $fokontanyToRename);
 
-        // Nettoyer la colonne fichier
+        // Nettoyer la colonne 0 (fichier source) après traitement
         foreach ($payerData as &$row) {
-            array_pop($row);
+            if (isset($row[0]) && strpos($row[0], 'Fichier') === 0) {
+                array_shift($row);
+            }
         }
         foreach ($npData as &$row) {
-            array_pop($row);
+            if (isset($row[0]) && strpos($row[0], 'Fichier') === 0) {
+                array_shift($row);
+            }
+        }
+    }
+    
+    /**
+     * Unifie les fokontany minoritaires vers le majoritaire du MÊME fichier
+     */
+    private function unifyMinorityToMajority(&$dataArray, $majorityFokontanyByFile)
+    {
+        foreach ($dataArray as &$row) {
+            $fokontany = isset($row[9]) ? trim($row[9]) : '';
+            $fileSource = isset($row[0]) ? trim($row[0]) : 'Fichier inconnu';
+            
+            if (!empty($fokontany) && isset($majorityFokontanyByFile[$fileSource])) {
+                $majorityFokontany = $majorityFokontanyByFile[$fileSource];
+                // Si ce fokontany n'est PAS le majoritaire du fichier, le renommer
+                if ($fokontany !== $majorityFokontany) {
+                    $row[9] = $majorityFokontany;
+                }
+            }
         }
     }
 
     /**
-     * Renomme les fokontany en doublon
+     * Convertit un nombre en chiffre romain
+     */
+    private function intToRoman($num)
+    {
+        $map = ['M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1];
+        $roman = '';
+        foreach ($map as $value => $int) {
+            while ($num >= $int) {
+                $roman .= $value;
+                $num -= $int;
+            }
+        }
+        return $roman;
+    }
+
+    /**
+     * Renomme les fokontany en doublon avec chiffres romains
+     * Utilise la colonne 0 (fichier source "Fichier 1", "Fichier 2", etc.)
+     * et la colonne 9 (fokontany)
      */
     private function renameDuplicateFokontany(&$dataArray, $fokontanyToRename)
     {
         $suffixMap = [];
 
         foreach ($dataArray as &$row) {
-            $originalFokontany = trim($row[8]);
-            $file = isset($row[13]) ? $row[13] : 'inconnu';
+            $originalFokontany = isset($row[9]) ? trim($row[9]) : ''; // Colonne 9 (décalée)
+            $fileSource = isset($row[0]) ? trim($row[0]) : 'Fichier inconnu'; // Colonne 0
 
-            if (isset($fokontanyToRename[$originalFokontany])) {
-                if (!isset($suffixMap[$originalFokontany][$file])) {
-                    $index = count($suffixMap[$originalFokontany] ?? []) + 1;
-                    $suffixMap[$originalFokontany][$file] = $originalFokontany . ' ' . $index;
+            if (!empty($originalFokontany) && isset($fokontanyToRename[$originalFokontany])) {
+                // Créer une clé unique pour chaque kombinaison fokontany + fichier source
+                $key = $originalFokontany . '|' . $fileSource;
+                
+                if (!isset($suffixMap[$key])) {
+                    // Trouver l'index du fichier source dans la liste des fichiers pour ce fokontany
+                    $fileIndex = array_search($fileSource, $fokontanyToRename[$originalFokontany]);
+                    if ($fileIndex === false) {
+                        $fileIndex = 0;
+                    }
+                    // Convertir en chiffre romain (1-indexed)
+                    $roman = $this->intToRoman($fileIndex + 1);
+                    $suffixMap[$key] = $originalFokontany . ' ' . $roman;
                 }
-                $row[8] = $suffixMap[$originalFokontany][$file];
+                $row[9] = $suffixMap[$key]; // Colonne 9 (décalée)
             }
         }
     }
 
     /**
      * Corrige les fokontany minoritaires en les renommant selon le fokontany majoritaire du fichier source
+     * ATTENTION : cette méthode est appelée AVANT array_shift, donc les indices incluent la colonne 0
+     * Colonne 0 = fichier source, Colonne 9 = fokontany
      */
     private function correctMinorityFokontany($dataArray)
     {
@@ -370,10 +489,10 @@ class ExcelProcessor
         $fileStats = [];
         
         foreach ($dataArray as $row) {
-            if (!empty($row[8])) {
-                // Enlever le suffixe numérique pour obtenir le nom de base du fokontany
-                $fokontanyBase = preg_replace('/ \d+$/', '', trim($row[8]));
-                $file = isset($row[13]) ? $row[13] : 'inconnu';
+            if (!empty($row[9])) { // Colonne 9 (avec décalage de colonne 0)
+                // Enlever le suffixe romain pour obtenir le nom de base du fokontany
+                $fokontanyBase = preg_replace('/ [IVXLCDM]+$/', '', trim($row[9]));
+                $file = isset($row[0]) ? trim($row[0]) : 'Fichier inconnu'; // Colonne 0
                 
                 if (!isset($fileStats[$file])) {
                     $fileStats[$file] = [];
@@ -398,15 +517,15 @@ class ExcelProcessor
         $correctedData = [];
         foreach ($dataArray as $row) {
             $correctedRow = $row;
-            if (!empty($correctedRow[8])) {
-                $fokontanyBase = preg_replace('/ \d+$/', '', trim($correctedRow[8]));
-                $fokontanySuffix = preg_match('/ (\d+)$/', $correctedRow[8], $matches) ? ' ' . $matches[1] : '';
-                $file = isset($correctedRow[13]) ? $correctedRow[13] : 'inconnu';
+            if (!empty($correctedRow[9])) { // Colonne 9 (avec décalage de colonne 0)
+                $fokontanyBase = preg_replace('/ [IVXLCDM]+$/', '', trim($correctedRow[9]));
+                $fokontanySuffix = preg_match('/ ([IVXLCDM]+)$/', $correctedRow[9], $matches) ? ' ' . $matches[1] : '';
+                $file = isset($correctedRow[0]) ? trim($correctedRow[0]) : 'Fichier inconnu'; // Colonne 0
                 
                 // Si ce fokontany n'est pas le majoritaire du fichier, le corriger
                 if (isset($majorityFokontany[$file]) && $fokontanyBase !== $majorityFokontany[$file]) {
-                    // Remplacer par le fokontany majoritaire en gardant le suffixe
-                    $correctedRow[8] = $majorityFokontany[$file] . $fokontanySuffix;
+                    // Remplacer par le fokontany majoritaire en gardant le suffixe romain
+                    $correctedRow[9] = $majorityFokontany[$file] . $fokontanySuffix;
                 }
             }
             $correctedData[] = $correctedRow;
@@ -423,8 +542,18 @@ class ExcelProcessor
         $payerSheet = $spreadsheet->createSheet();
         $payerSheet->setTitle('PAYER');
 
+        // Enlever la colonne "Source" des en-têtes pour la feuille PAYER
+        $cleanHeaderRows = [];
+        foreach ($headerRows as $headerRow) {
+            $cleanRow = $headerRow;
+            if (isset($cleanRow[0]) && $cleanRow[0] === 'Source') {
+                array_shift($cleanRow);
+            }
+            $cleanHeaderRows[] = $cleanRow;
+        }
+
         // Ajout des en-têtes et données
-        $payerSheet->fromArray($headerRows, null, 'A1');
+        $payerSheet->fromArray($cleanHeaderRows, null, 'A1');
         $payerSheet->fromArray($payerData, null, 'A6');
 
         // Configuration de la feuille
@@ -439,8 +568,18 @@ class ExcelProcessor
         $npSheet = $spreadsheet->createSheet();
         $npSheet->setTitle('NP');
 
+        // Enlever la colonne "Source" des en-têtes pour la feuille NP
+        $cleanHeaderRows = [];
+        foreach ($headerRows as $headerRow) {
+            $cleanRow = $headerRow;
+            if (isset($cleanRow[0]) && $cleanRow[0] === 'Source') {
+                array_shift($cleanRow);
+            }
+            $cleanHeaderRows[] = $cleanRow;
+        }
+
         // Ajout des en-têtes et données
-        $npSheet->fromArray($headerRows, null, 'A1');
+        $npSheet->fromArray($cleanHeaderRows, null, 'A1');
         $npSheet->fromArray($npData, null, 'A6');
 
         // Configuration de la feuille
@@ -699,8 +838,8 @@ class ExcelProcessor
         // Regroupement des données par fokontany (avec suffixe si différent fichier source)
         $fokontanyData = [];
         foreach ($correctedData as $row) {
-            if (!empty($row[8])) {
-                $fokontany = $row[8]; // Garde le suffixe numérique si présent
+            if (!empty($row[8])) { // Colonne 8 (fokontany) - colonne 0 a été supprimée
+                $fokontany = $row[8]; // Garde le suffixe romain si présent
                 
                 if (!isset($fokontanyData[$fokontany])) {
                     $fokontanyData[$fokontany] = [
@@ -710,9 +849,9 @@ class ExcelProcessor
                     ];
                 }
 
-                if ($row[11] === '‌Payé en totalité') {
+                if ($row[11] === '‌Payé en totalité') { // Colonne 11 (anciennement 11) - colonne 0 a été supprimée
                     $fokontanyData[$fokontany]['prevision_nbre']++;
-                    $fokontanyData[$fokontany]['prevision_montant'] += $row[10];
+                    $fokontanyData[$fokontany]['prevision_montant'] += $row[10]; // Montant en colonne 10
                     $fokontanyData[$fokontany]['realisation_nbre']++;
                     $fokontanyData[$fokontany]['realisation_montant'] += $row[10];
                 } elseif ($row[11] === '‌Non payé') {
