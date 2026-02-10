@@ -365,7 +365,7 @@ class ErickRapportApp {
             // Si upload réussi et page fusion, proposer la fusion
             if (uploadOk && (window.location.pathname.includes('fusion') || document.title.toLowerCase().includes('fusion'))) {
                 setTimeout(() => {
-                    if (confirm('Fichiers téléchargés avec succès !')) {
+                    window.showConfirm('Fichiers téléchargés avec succès !', () => {
                         // Affiche le bouton Fusionner si présent
                         const fusionForm = document.getElementById('fusionForm');
                         if (fusionForm) {
@@ -378,7 +378,7 @@ class ErickRapportApp {
                         // Réinitialise le champ fichier
                         const fileInput = document.getElementById('file');
                         if (fileInput) fileInput.value = '';
-                    }
+                    }, function(){});
                 }, 100);
             }
         } catch (error) {
@@ -991,10 +991,15 @@ class ErickRapportApp {
                 });
                 
                 // Réinitialisation complète après chargement du contenu
-                // Crée une nouvelle instance pour relier tous les événements sur le nouveau DOM
-                window.erickApp = new ErickRapportApp();
-                // Ajout explicite pour garantir la détection des formulaires
-                window.erickApp.reinitializeAfterContentLoad();
+                // N'utiliser que la réinitialisation, pas une nouvelle instance
+                // Une nouvelle instance appellerait loadStoredData() qui rechercherait la dernière page
+                if (window.erickApp) {
+                    window.erickApp.initializeElements();
+                    window.erickApp.bindEvents();
+                    window.erickApp.reinitializeAfterContentLoad();
+                } else {
+                    window.erickApp = new ErickRapportApp();
+                }
                 // Charger les rapports et les activités si la page les affiche
                 if (typeof window.chargerActivitesFiltre === 'function') {
                     window.chargerActivitesFiltre();
@@ -1172,12 +1177,12 @@ class ErickRapportApp {
                     console.log('✅ Tous les selects remplis avec succès');
                 } else {
                     console.error('❌ Erreur API:', data.error || data.message);
-                    alert('Erreur lors du chargement des paramètres: ' + (data.error || data.message));
+                    displayAlert('❌ Erreur lors du chargement des paramètres: ' + (data.error || data.message));
                 }
             })
             .catch(error => {
                 console.error('❌ Erreur de chargement:', error);
-                alert('Erreur de connexion: ' + error.message);
+                displayAlert('❌ Erreur de connexion: ' + error.message);
             });
     }
 
@@ -1255,6 +1260,98 @@ window.reinitErickAppUI = function() {
 setTimeout(() => {
     window.reinitErickAppUI();
 }, 50);
+
+// --- Global modal helpers (modern styled popups) ---
+(function(){
+    function createModal(html) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'global-modal-wrapper';
+        wrapper.innerHTML = html;
+        document.body.appendChild(wrapper);
+        return wrapper;
+    }
+
+    function removeModal(modal) {
+        if (!modal) return;
+        modal.classList.add('fade-out');
+        setTimeout(() => modal.remove(), 220);
+    }
+
+    // Simple styles (scoped) if not already injected
+    if (!document.getElementById('global-modal-styles')) {
+        const style = document.createElement('style');
+        style.id = 'global-modal-styles';
+        style.textContent = `
+            .global-modal-wrapper {position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:20000}
+            .global-modal {background:#0f1724;color:#e6eef8;border-radius:12px;padding:22px;min-width:320px;max-width:720px;box-shadow:0 8px 30px rgba(0,0,0,0.6);font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+            .global-modal h3{margin:0 0 8px;font-size:18px}
+            .global-modal .gm-content{margin:8px 0 14px;font-size:14px}
+            .gm-actions{display:flex;gap:10px;justify-content:flex-end}
+            .gm-btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+            .gm-btn.secondary{background:#1f2937;color:#fff}
+            .gm-btn.primary{background:#06b6d4;color:#04202a}
+            .global-modal input[type="text"]{width:100%;padding:8px;border-radius:8px;border:1px solid #334155;background:#0b1220;color:#e6eef8}
+            .fade-out{opacity:0;transition:opacity .18s ease}
+        `;
+        document.head.appendChild(style);
+    }
+
+    window.showAlert = function(message, opts = {}) {
+        const modal = createModal(`
+            <div class="global-modal" role="dialog" aria-modal="true">
+                <div class="gm-content">${message}</div>
+                <div class="gm-actions">
+                    <button class="gm-btn primary gm-ok">OK</button>
+                </div>
+            </div>
+        `);
+        modal.querySelector('.gm-ok').addEventListener('click', () => removeModal(modal));
+        if (opts.autoClose && typeof opts.autoClose === 'number') {
+            setTimeout(() => removeModal(modal), opts.autoClose);
+        }
+        return modal;
+    };
+
+    window.showConfirm = function(message, onYes, onNo, opts = {}) {
+        const modal = createModal(`
+            <div class="global-modal" role="dialog" aria-modal="true">
+                <div class="gm-content">${message}</div>
+                <div class="gm-actions">
+                    <button class="gm-btn secondary gm-cancel">Annuler</button>
+                    <button class="gm-btn primary gm-yes">Confirmer</button>
+                </div>
+            </div>
+        `);
+        modal.querySelector('.gm-yes').addEventListener('click', () => { removeModal(modal); if (typeof onYes === 'function') onYes(); });
+        modal.querySelector('.gm-cancel').addEventListener('click', () => { removeModal(modal); if (typeof onNo === 'function') onNo(); });
+        return modal;
+    };
+
+    window.showPrompt = function(message, defaultValue, callback) {
+        const modal = createModal(`
+            <div class="global-modal" role="dialog" aria-modal="true">
+                <h3>${message}</h3>
+                <div class="gm-content"><input type="text" class="gm-input" value="${(defaultValue||'').replace(/"/g,'&quot;')}"></div>
+                <div class="gm-actions">
+                    <button class="gm-btn secondary gm-cancel">Annuler</button>
+                    <button class="gm-btn primary gm-ok">OK</button>
+                </div>
+            </div>
+        `);
+        const input = modal.querySelector('.gm-input');
+        input.focus();
+        modal.querySelector('.gm-ok').addEventListener('click', () => {
+            const val = input.value.trim();
+            removeModal(modal);
+            if (typeof callback === 'function') callback(val);
+        });
+        modal.querySelector('.gm-cancel').addEventListener('click', () => {
+            removeModal(modal);
+            if (typeof callback === 'function') callback(null);
+        });
+        return modal;
+    };
+})();
 
 // Fonctions globales pour compatibilité avec l'ancien code
 function uploadFile() {
@@ -1388,8 +1485,8 @@ window.telechargerRapport = function(id) {
 };
 
 window.renommerRapport = function(id, nomActuel) {
-    const nouveauNom = prompt('Nouveau nom pour le rapport:', nomActuel);
-    if (nouveauNom && nouveauNom !== nomActuel) {
+    window.showPrompt('Nouveau nom pour le rapport:', nomActuel, function(nouveauNom) {
+        if (!nouveauNom || nouveauNom === nomActuel) return;
         const formData = new FormData();
         formData.append('id', id);
         formData.append('nouveau_nom', nouveauNom);
@@ -1401,17 +1498,17 @@ window.renommerRapport = function(id, nomActuel) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Rapport renommé avec succès!');
+                displayAlert('✅ Rapport renommé avec succès!');
                 // Recharger avec le filtre actuel
                 const selectDiv = document.getElementById('filtre-activite');
                 const activiteId = selectDiv ? selectDiv.value : '';
                 window.chargerRapports(activiteId);
             } else {
-                alert('Erreur: ' + data.error);
+                displayAlert('❌ Erreur: ' + data.error);
             }
         })
-        .catch(error => alert('Erreur: ' + error.message));
-    }
+        .catch(error => displayAlert('❌ Erreur: ' + error.message));
+    });
 };
 
 // ===== GESTION DES SUPPRESSIONS DE RAPPORT =====
@@ -1474,16 +1571,16 @@ window.supprimerRapport = function(id) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Rapport supprimé avec succès!');
+                displayAlert('✅ Rapport supprimé avec succès!');
                 // Recharger avec le filtre actuel
                 const selectDiv = document.getElementById('filtre-activite');
                 const activiteId = selectDiv ? selectDiv.value : '';
                 window.chargerRapports(activiteId);
             } else {
-                alert('Erreur: ' + data.error);
+                displayAlert('❌ Erreur: ' + data.error);
             }
         })
-        .catch(error => alert('Erreur: ' + error.message));
+        .catch(error => displayAlert('❌ Erreur: ' + error.message));
     });
 };
 
@@ -1551,42 +1648,42 @@ function addItem(table) {
 }
 
 function editItem(table, id, oldNom) {
-    const newNom = prompt('Modifier:', oldNom);
-    if (!newNom || newNom === oldNom) return;
-
-    fetch('gestion_parametres.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `action=update&table=${table}&id=${id}&nom=${encodeURIComponent(newNom)}`
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            showMessage(table, 'success', data.message);
-            reloadSection(table);
-        } else {
-            showMessage(table, 'error', data.error);
-        }
+    window.showPrompt('Modifier:', oldNom, function(newNom) {
+        if (!newNom || newNom === oldNom) return;
+        fetch('gestion_parametres.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `action=update&table=${table}&id=${id}&nom=${encodeURIComponent(newNom)}`
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showMessage(table, 'success', data.message);
+                reloadSection(table);
+            } else {
+                showMessage(table, 'error', data.error);
+            }
+        });
     });
 }
 
 function deleteItem(table, id) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) return;
-
-    fetch('gestion_parametres.php', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `action=delete&table=${table}&id=${id}`
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            showMessage(table, 'success', data.message);
-            reloadSection(table);
-        } else {
-            showMessage(table, 'error', data.error);
-        }
-    });
+    window.showConfirm('Êtes-vous sûr de vouloir supprimer cet élément ?', function() {
+        fetch('gestion_parametres.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `action=delete&table=${table}&id=${id}`
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showMessage(table, 'success', data.message);
+                reloadSection(table);
+            } else {
+                showMessage(table, 'error', data.error);
+            }
+        });
+    }, function(){});
 }
 
 function reloadSection(table) {

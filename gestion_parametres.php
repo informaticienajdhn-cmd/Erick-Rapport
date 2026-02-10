@@ -324,42 +324,43 @@ $titres = $db->getAll('titres_transfert');
         }
 
         function editItem(table, id, oldNom) {
-            const newNom = prompt('Modifier:', oldNom);
-            if (!newNom || newNom === oldNom) return;
+            window.showPrompt('Modifier:', oldNom, function(newNom) {
+                if (!newNom || newNom === oldNom) return;
 
-            fetch('gestion_parametres.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `action=update&table=${table}&id=${id}&nom=${encodeURIComponent(newNom)}`
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage(table, 'success', data.message);
-                    location.reload();
-                } else {
-                    showMessage(table, 'error', data.error);
-                }
+                fetch('gestion_parametres.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `action=update&table=${table}&id=${id}&nom=${encodeURIComponent(newNom)}`
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(table, 'success', data.message);
+                        location.reload();
+                    } else {
+                        showMessage(table, 'error', data.error);
+                    }
+                });
             });
         }
 
         function deleteItem(table, id) {
-            if (!confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) return;
-
-            fetch('gestion_parametres.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `action=delete&table=${table}&id=${id}`
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage(table, 'success', data.message);
-                    location.reload();
-                } else {
-                    showMessage(table, 'error', data.error);
-                }
-            });
+            window.showConfirm('Êtes-vous sûr de vouloir supprimer cet élément ?', function() {
+                fetch('gestion_parametres.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `action=delete&table=${table}&id=${id}`
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(table, 'success', data.message);
+                        location.reload();
+                    } else {
+                        showMessage(table, 'error', data.error);
+                    }
+                });
+            }, function(){});
         }
     </script>
 </body>

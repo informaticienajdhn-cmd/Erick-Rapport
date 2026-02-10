@@ -291,10 +291,23 @@ class ExcelProcessor
 
         $this->updateProgress(78, 'Gestion des doublons de Fokontany...');
         
-        // Gestion des doublons de Fokontany
-        $this->handleDuplicateFokontany($payerData, $npData);
+        // Gestion des doublons de Fokontany : appliquer la logique de renommage
+        // uniquement si on fusionne plusieurs fichiers
+        if ($this->totalFiles > 1) {
+            $this->handleDuplicateFokontany($payerData, $npData);
+        }
 
-        // ✅ CRÉER RECAP FIN EN PREMIER (avec les logos)
+        // Nettoyer la colonne 0 (fichier source) pour les feuilles finales (toujours nécessaire)
+        foreach ($payerData as &$row) {
+            if (isset($row[0]) && strpos($row[0], 'Fichier') === 0) {
+                array_shift($row);
+            }
+        }
+        foreach ($npData as &$row) {
+            if (isset($row[0]) && strpos($row[0], 'Fichier') === 0) {
+                array_shift($row);
+            }
+        }
         // Cela évite les opérations de réorganisation qui perdent les images
         $this->updateProgress(88, 'Création de la feuille récapitulative...');
         $this->createRecapSheet($spreadsheet, $payerData, $npData);
@@ -397,18 +410,6 @@ class ExcelProcessor
         // Étape 5 : Ajouter les suffixes romains SEULEMENT aux fokontany présents dans plusieurs fichiers
         $this->renameDuplicateFokontany($payerData, $fokontanyToRename);
         $this->renameDuplicateFokontany($npData, $fokontanyToRename);
-
-        // Nettoyer la colonne 0 (fichier source) après traitement
-        foreach ($payerData as &$row) {
-            if (isset($row[0]) && strpos($row[0], 'Fichier') === 0) {
-                array_shift($row);
-            }
-        }
-        foreach ($npData as &$row) {
-            if (isset($row[0]) && strpos($row[0], 'Fichier') === 0) {
-                array_shift($row);
-            }
-        }
     }
     
     /**

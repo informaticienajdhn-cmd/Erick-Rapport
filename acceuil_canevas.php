@@ -4,7 +4,7 @@
         margin: 0 auto;
         padding: 20px;
     }
-    
+
     .canevas-header {
         background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
         color: white;
@@ -12,12 +12,12 @@
         border-radius: 8px;
         margin-bottom: 30px;
     }
-    
+
     .canevas-header h2 {
         margin: 0 0 10px 0;
         font-size: 24px;
     }
-    
+
     .canevas-header p {
         margin: 0;
         opacity: 0.9;
@@ -70,8 +70,8 @@
     .canevas-tab-content.active {
         display: block;
     }
-    
-    
+
+
     .canevas-table-wrapper {
         border: 1px solid #e5e7eb;
         border-radius: 6px;
@@ -81,7 +81,7 @@
         overflow-y: scroll;
         overflow-x: hidden;
     }
-    
+
     .canevas-table {
         width: 100%;
         min-width: auto;
@@ -89,26 +89,26 @@
         background: white;
         table-layout: fixed;
     }
-    
+
     .canevas-table th,
     .canevas-table td {
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    
+
     .canevas-table th:nth-child(1) { width: 30%; }
     .canevas-table th:nth-child(2) { width: 20%; }
     .canevas-table th:nth-child(3) { width: 18%; }
     .canevas-table th:nth-child(4) { width: 12%; }
     .canevas-table th:nth-child(5) { width: 20%; }
-    
+
     .canevas-table thead {
         background: #f3f4f6;
         position: sticky;
         top: 0;
         z-index: 10;
     }
-    
+
     .canevas-table th {
         padding: 6px 8px;
         text-align: left;
@@ -117,51 +117,51 @@
         color: #374151;
         border-bottom: 2px solid #e5e7eb;
     }
-    
+
     .canevas-table td {
         padding: 6px 8px;
         border-bottom: 1px solid #e5e7eb;
         font-size: 11px;
     }
-    
+
     .canevas-table tbody tr:hover {
         background-color: #f9fafb;
     }
-    
+
     .canevas-table tbody tr:last-child td {
         border-bottom: none;
     }
-    
+
     .canevas-filename {
         font-weight: 600;
         color: #1f2937;
         line-height: 1.3;
     }
-    
+
     .canevas-version {
         font-size: 10px;
         color: #999;
         font-weight: normal;
     }
-    
+
     .canevas-activite {
         color: #666;
         font-size: 12px;
     }
-    
+
     .canevas-date {
         color: #999;
         white-space: nowrap;
         font-size: 12px;
     }
-    
+
     .canevas-actions {
         display: flex;
         gap: 6px;
         justify-content: flex-end;
         white-space: nowrap;
     }
-    
+
     .canevas-btn {
         padding: 4px 7px;
         border: none;
@@ -171,41 +171,41 @@
         font-weight: 600;
         transition: all 0.2s;
     }
-    
+
     .canevas-btn-download {
         background: #2563eb;
         color: white;
     }
-    
+
     .canevas-btn-download:hover {
         background: #1e40af;
     }
-    
+
     .canevas-btn-delete {
         background: #ef4444;
         color: white;
     }
-    
+
     .canevas-btn-delete:hover {
         background: #dc2626;
     }
-    
+
     .canevas-empty {
         text-align: center;
         padding: 60px 20px;
         color: #999;
     }
-    
+
     .canevas-empty-icon {
         font-size: 48px;
         margin-bottom: 15px;
     }
-    
+
     .canevas-empty-text {
         font-size: 16px;
         margin-bottom: 20px;
     }
-    
+
     .canevas-loading {
         text-align: center;
         padding: 40px;
@@ -447,20 +447,20 @@
         <h2>📄 Mes Fichiers Canevas</h2>
         <p>Liste des Pages de garde et des Conclusions</p>
     </div>
-    
+
     <!-- Système d'onglets -->
     <div class="canevas-tabs">
         <button class="canevas-tab-button active" data-tab="canevas-tab">📄 PAGES DE GARDE</button>
         <button class="canevas-tab-button conclusions" data-tab="conclusions-tab">📋 CONCLUSIONS</button>
     </div>
-    
+
     <!-- Onglet Pages de Garde -->
     <div id="canevas-tab" class="canevas-tab-content active">
         <div id="canevas-content">
             <div class="canevas-loading">🔄 Chargement des pages de garde...</div>
         </div>
     </div>
-    
+
     <!-- Onglet Conclusions -->
     <div id="conclusions-tab" class="canevas-tab-content">
         <div id="conclusions-content">
@@ -471,20 +471,20 @@
 
 <script>
     console.log('Script canevas.php exécuté');
-    
+
     // Charger et afficher les PAGES DE GARDE
     window.loadCanevasPage = function() {
         console.log('loadCanevasPage appelé');
         const contentDiv = document.getElementById('canevas-content');
-        
+
         if (!contentDiv) {
             console.error('Élément canevas-content non trouvé, réessai dans 100ms...');
             setTimeout(() => window.loadCanevasPage(), 100);
             return;
         }
-        
+
         contentDiv.innerHTML = '<div class="canevas-loading">🔄 Chargement des pages de garde...</div>';
-        
+
         fetch('api_list_canevas.php')
             .then(response => {
                 console.log('Réponse API:', response.status);
@@ -493,7 +493,7 @@
             })
             .then(data => {
                 console.log('Données reçues:', data);
-                
+
                 if (data.success && data.canevas && data.canevas.length > 0) {
                     console.log('Affichage de', data.canevas.length, 'pages de garde');
                     contentDiv.innerHTML = `
@@ -554,20 +554,20 @@
                 `;
             });
     };
-    
+
     // Charger et afficher les CONCLUSIONS
     window.loadConclusionsPage = function() {
         console.log('loadConclusionsPage appelé');
         const contentDiv = document.getElementById('conclusions-content');
-        
+
         if (!contentDiv) {
             console.error('Élément conclusions-content non trouvé, réessai dans 100ms...');
             setTimeout(() => window.loadConclusionsPage(), 100);
             return;
         }
-        
+
         contentDiv.innerHTML = '<div class="canevas-loading">🔄 Chargement des conclusions...</div>';
-        
+
         fetch('api_list_conclusions.php')
             .then(response => {
                 console.log('Réponse API:', response.status);
@@ -576,7 +576,7 @@
             })
             .then(data => {
                 console.log('Données reçues:', data);
-                
+
                 if (data.success && data.conclusions && data.conclusions.length > 0) {
                     console.log('Affichage de', data.conclusions.length, 'conclusions');
                     contentDiv.innerHTML = `
@@ -637,7 +637,7 @@
                 `;
             });
     };
-    
+
     // Télécharger une page de garde
     window.downloadCanevas = function(id, filename) {
         console.log('Téléchargement du canevas', id);
@@ -646,7 +646,7 @@
         link.download = filename;
         link.click();
     };
-    
+
     // Télécharger une conclusion
     window.downloadConclusion = function(id, filename) {
         console.log('Téléchargement de la conclusion', id);
@@ -655,55 +655,55 @@
         link.download = filename;
         link.click();
     };
-    
+
     // Supprimer une page de garde
     window.deleteCanevasPage = function(id) {
-        if (!confirm('Supprimer cette page de garde ?')) return;
-        
-        fetch('api_delete_canevas.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id: id})
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Réponse suppression:', data);
-            if (data.success) {
-                window.loadCanevasPage();
-            } else {
-                alert('Erreur: ' + (data.error || 'Erreur inconnue'));
-            }
-        })
-        .catch(error => {
-            console.error('Erreur suppression:', error);
-            alert('Erreur lors de la suppression: ' + error.message);
-        });
+        window.showConfirm('Supprimer cette page de garde ?', function() {
+            fetch('api_delete_canevas.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: id})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Réponse suppression:', data);
+                if (data.success) {
+                    window.loadCanevasPage();
+                } else {
+                    window.showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'));
+                }
+            })
+            .catch(error => {
+                console.error('Erreur suppression:', error);
+                window.showAlert('❌ Erreur lors de la suppression: ' + error.message);
+            });
+        }, function(){});
     };
-    
+
     // Supprimer une conclusion
     window.deleteConclusion = function(id) {
-        if (!confirm('Supprimer cette conclusion ?')) return;
-        
-        fetch('api_delete_conclusion.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id: id})
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Réponse suppression:', data);
-            if (data.success) {
-                window.loadConclusionsPage();
-            } else {
-                alert('Erreur: ' + (data.error || 'Erreur inconnue'));
-            }
-        })
-        .catch(error => {
-            console.error('Erreur suppression:', error);
-            alert('Erreur lors de la suppression: ' + error.message);
-        });
+        window.showConfirm('Supprimer cette conclusion ?', function() {
+            fetch('api_delete_conclusion.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: id})
+            })
+            .then(response => response.json())
+.then(data => {
+                console.log('Réponse suppression:', data);
+                if (data.success) {
+                    window.loadConclusionsPage();
+                } else {
+                    window.showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'));
+                }
+            })
+            .catch(error => {
+                console.error('Erreur suppression:', error);
+                window.showAlert('❌ Erreur lors de la suppression: ' + error.message);
+            });
+        }, function(){});
     };
-    
+
     // Charger les deux sections au démarrage - avec un délai pour s'assurer que le DOM est prêt
     setTimeout(() => {
         console.log('Appel de loadCanevasPage et loadConclusionsPage après délai');
@@ -715,7 +715,7 @@
     document.querySelectorAll('.canevas-tab-button').forEach(button => {
         button.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
-            
+
             // Désactiver tous les onglets
             document.querySelectorAll('.canevas-tab-button').forEach(btn => {
                 btn.classList.remove('active');
@@ -723,7 +723,7 @@
             document.querySelectorAll('.canevas-tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            
+
             // Activer l'onglet cliqué
             this.classList.add('active');
             document.getElementById(tabId).classList.add('active');
