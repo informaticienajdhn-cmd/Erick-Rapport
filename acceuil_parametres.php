@@ -9,176 +9,28 @@
     <!-- Styles responsive pour les formulaires -->
     <style>
         @media (max-width: 899px) {
-            #canevasForm > div,
-            #conclusionForm > div {
+            .param-upload-form {
                 grid-template-columns: 1fr !important;
             }
-            
-            #canevasForm > div button,
-            #conclusionForm > div button {
+
+            .param-upload-form .form-field-action {
                 grid-column: 1 / -1;
             }
         }
     </style>
-    
-    <!-- SCRIPT CANEVAS (CHARGÉ IMMÉDIATEMENT) -->
-    <script>
-        // Charger la liste des canevas
-        window.loadCanevas = function() {
-            console.log('🔄 Chargement des canevas...');
-            const listDiv = document.getElementById('list-canevas-items');
-            if (!listDiv) {
-                console.error('❌ list-canevas-items introuvable!');
-                return;
-            }
-            
-            listDiv.innerHTML = '<div style="text-align: center; padding: 30px; color: #3b82f6;">🔄 Chargement...</div>';
-            
-            fetch('api_list_canevas.php')
-                .then(response => {
-                    console.log('📡 Response status:', response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('📦 Data received:', data);
-                    
-                    if (data.success && data.canevas && data.canevas.length > 0) {
-                        console.log('✅ Affichage de', data.canevas.length, 'canevas');
-                        listDiv.innerHTML = data.canevas.map(c => `
-                            <div class="item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-left: 4px solid #3b82f6; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                                <div style="flex: 1;">
-                                    <strong style="font-size: 13px; color: #1f2937;">${c.activite_nom || 'Activité #' + c.activite_id}</strong> <span style="color: #999;">-</span> <strong style="font-size: 13px; color: #1f2937;">${c.commune_nom || 'Commune #' + c.commune_id}</strong>
-                                    <br><small style="color: #666; font-size: 11px;">📄 ${c.nom_fichier}</small>
-                                    <br><small style="color: #999; font-size: 10px;">📅 ${c.created_at ? new Date(c.created_at).toLocaleDateString('fr-FR') : 'Date inconnue'}</small>
-                                </div>
-                                <button class="btn-delete" onclick="window.deleteCanevas(${c.id})" style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap;">🗑️ Supprimer</button>
-                            </div>
-                        `).join('');
-                    } else {
-                        console.log('⚠️ Aucun canevas trouvé');
-                        listDiv.innerHTML = '<div style="color: #999; text-align: center; padding: 30px; font-size: 12px; background: #f9fafb; border-radius: 4px;">📭 Aucun canevas enregistré</div>';
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Erreur chargement canevas:', error);
-                    listDiv.innerHTML = '<div style="color: red; text-align: center; padding: 30px; font-size: 12px; background: #fee2e2; border-radius: 4px;">❌ Erreur: ' + error.message + '</div>';
-                });
-        }
-        
-        // Supprimer un canevas
-        window.deleteCanevas = function(id) {
-            window.showDeleteConfirm('Êtes-vous sûr de vouloir supprimer ce canevas ?<br><strong>Cette action est irréversible.</strong>', function() {
-                fetch('api_delete_canevas.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({id: id})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.loadCanevas();
-                    } else {
-                        alert('Erreur: ' + data.error);
-                    }
-                });
-            });
-        };
-        
-        // Charger la liste des conclusions
-        window.loadConclusions = function() {
-            console.log('🔄 Chargement des conclusions...');
-            const listDiv = document.getElementById('list-conclusions-items');
-            if (!listDiv) {
-                console.error('❌ list-conclusions-items introuvable!');
-                return;
-            }
-            
-            listDiv.innerHTML = '<div style="text-align: center; padding: 30px; color: #3b82f6;">🔄 Chargement...</div>';
-            
-            fetch('api_list_conclusions.php')
-                .then(response => {
-                    console.log('📡 Response status:', response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('📦 Data received:', data);
-                    
-                    if (data.success && data.conclusions && data.conclusions.length > 0) {
-                        console.log('✅ Affichage de', data.conclusions.length, 'conclusions');
-                        listDiv.innerHTML = data.conclusions.map(c => `
-                            <div class="item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-left: 4px solid #8b5cf6; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                                <div style="flex: 1;">
-                                    <strong style="font-size: 13px; color: #1f2937;">${c.activite_nom || 'Activité #' + c.activite_id}</strong> <span style="color: #999;">-</span> <strong style="font-size: 13px; color: #1f2937;">${c.commune_nom || 'Commune #' + c.commune_id}</strong>
-                                    <br><small style="color: #666; font-size: 11px;">📄 ${c.nom_fichier}</small>
-                                    <br><small style="color: #999; font-size: 10px;">📅 ${c.created_at ? new Date(c.created_at).toLocaleDateString('fr-FR') : 'Date inconnue'}</small>
-                                </div>
-                                <button class="btn-delete" onclick="window.deleteConclusion(${c.id})" style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap;">🗑️ Supprimer</button>
-                            </div>
-                        `).join('');
-                    } else {
-                        console.log('⚠️ Aucune conclusion trouvée');
-                        listDiv.innerHTML = '<div style="color: #999; text-align: center; padding: 30px; font-size: 12px; background: #f9fafb; border-radius: 4px;">📭 Aucune conclusion enregistrée</div>';
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Erreur chargement conclusions:', error);
-                    listDiv.innerHTML = '<div style="color: red; text-align: center; padding: 30px; font-size: 12px; background: #fee2e2; border-radius: 4px;">❌ Erreur: ' + error.message + '</div>';
-                });
-        }
-        
-        // Supprimer une conclusion
-        window.deleteConclusion = function(id) {
-            window.showDeleteConfirm('Êtes-vous sûr de vouloir supprimer cette conclusion ?<br><strong>Cette action est irréversible.</strong>', function() {
-                fetch('api_delete_conclusion.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({id: id})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.loadConclusions();
-                        // Aussi recharger la page canevas si elle est chargée
-                        if (typeof window.loadCanevasPage === 'function') {
-                            window.loadCanevasPage();
-                        }
-                    } else {
-                        alert('Erreur: ' + data.error);
-                    }
-                });
-            });
-        };
-    </script>
 </head>
 <body class="body-import">
-    <!-- Modal de confirmation de suppression -->
     <div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;">
-        <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); max-width: 400px; text-align: center; animation: slideIn 0.3s ease;">
+        <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); max-width: 400px; text-align: center;">
             <h2 style="color: #ef4444; margin-bottom: 15px; font-size: 20px;">🗑️ Confirmer la suppression</h2>
             <p id="deleteMessage" style="color: #666; margin-bottom: 25px; font-size: 14px; line-height: 1.6;"></p>
             <div style="display: flex; gap: 10px; justify-content: center;">
-                <button onclick="cancelDelete()" style="flex: 1; padding: 12px; background: #e5e7eb; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 0.2s;">❌ Annuler</button>
-                <button onclick="confirmDelete()" style="flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 0.2s;">✅ Supprimer</button>
+                <button onclick="cancelDelete()" style="flex: 1; padding: 12px; background: #e5e7eb; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">❌ Annuler</button>
+                <button onclick="confirmDelete()" style="flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">✅ Supprimer</button>
             </div>
         </div>
     </div>
 
-    <style>
-        @keyframes slideIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-    </style>
-
-    <header>
-        <h1>⚙️ PARAMÈTRES</h1>
-    </header>
     <div class="container">
 <?php
 /**
@@ -207,37 +59,40 @@ $terroirs_list = $db->getAll('terroirs');
         grid-template-columns: 1fr;
         gap: 0;
         padding: 0;
-        max-height: calc(100vh - 200px);
         overflow-y: auto;
         overflow-x: hidden;
     }
     
-    /* 🗂️ Onglets */
+    /* Onglets compacts sans scroll horizontal */
     .tabs-container {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(8, minmax(0, 1fr));
         gap: 0;
         border-bottom: 2px solid #e5e7eb;
-        margin-bottom: 20px;
+        margin-bottom: 12px;
         background: #f9fafb;
         border-radius: 8px 8px 0 0;
-        overflow-x: auto;
+        overflow: hidden;
         position: sticky;
         top: 0;
         z-index: 10;
+        width: 100%;
     }
 
     .tab-button {
-        padding: 12px 20px;
+        padding: 7px 2px;
         background: transparent;
         border: none;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 10px;
         font-weight: 600;
         color: #6b7280;
         border-bottom: 3px solid transparent;
-        transition: all 0.3s;
-        white-space: nowrap;
-        flex-shrink: 0;
+        transition: all 0.2s;
+        white-space: normal;
+        line-height: 1.15;
+        text-align: center;
+        min-width: 0;
     }
 
     .tab-button:hover {
@@ -516,9 +371,88 @@ $terroirs_list = $db->getAll('terroirs');
     .item.is-hidden {
         display: none;
     }
+
+    @media (max-width: 1100px) {
+        .tabs-container {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .param-upload-form {
+            grid-template-columns: 1fr 1fr !important;
+        }
+
+        .param-upload-form .form-field-action {
+            grid-column: 1 / -1;
+        }
+    }
+
+    .param-upload-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 10px;
+        align-items: end;
+    }
+
+    .param-upload-form .form-field {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .param-upload-form .form-field label {
+        display: block;
+        margin: 0 0 5px 0;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 1.25;
+        min-height: 30px;
+    }
+
+    .param-upload-form .form-field select,
+    .param-upload-form .form-field input[type="file"] {
+        width: 100%;
+        height: 38px;
+        padding: 6px 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 12px;
+        box-sizing: border-box;
+        margin: 0;
+        background: #fff;
+    }
+
+    .param-upload-form .form-field input[type="file"] {
+        padding: 4px 6px;
+    }
+
+    .param-upload-form .form-field-action {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .param-upload-form .form-submit-btn {
+        height: 38px;
+        padding: 0 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .param-upload-form .form-submit-btn--canevas {
+        background: #2563eb;
+        color: #fff;
+    }
+
+    .param-upload-form .form-submit-btn--conclusion {
+        background: #8b5cf6;
+        color: #fff;
+    }
 </style>
 
-<div style="padding: 20px;">
+<div class="params-page-wrap">
     <div class="params-header">
         <h2>⚙️ Gestion des Paramètres</h2>
         <p>Gérez vos terroirs, communes, régions, districts et titres de transfert</p>
@@ -530,10 +464,10 @@ $terroirs_list = $db->getAll('terroirs');
         <button class="tab-button" onclick="switchTab('communes')">🏘️ Communes</button>
         <button class="tab-button" onclick="switchTab('regions')">🗺️ Régions</button>
         <button class="tab-button" onclick="switchTab('districts')">📌 Districts</button>
-        <button class="tab-button" onclick="switchTab('titres')">📋 Titres Transfert</button>
+        <button class="tab-button" onclick="switchTab('titres')">📋 Titres</button>
         <button class="tab-button" onclick="switchTab('activites')">⚡ Activités</button>
-        <button class="tab-button" onclick="switchTab('canevas'); setTimeout(window.loadCanevas, 100);">📄 PAGE DE GARDE</button>
-        <button class="tab-button" onclick="switchTab('conclusions'); setTimeout(window.loadConclusions, 100);">📋 CONCLUSION</button>
+        <button class="tab-button" onclick="switchTab('canevas')">📄 P. garde</button>
+        <button class="tab-button" onclick="switchTab('conclusions')">📋 Conclusion</button>
     </div>
 
     <div class="params-grid">
@@ -708,40 +642,33 @@ $terroirs_list = $db->getAll('terroirs');
                 <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Uploadez des fichiers Excel page de garde liés à une activité et une commune</p>
                 <div id="message-canevas"></div>
                 
-                <form id="canevasForm" enctype="multipart/form-data" onsubmit="return false;" style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 20px; flex-shrink: 0;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
-                        <div>
-                            <label for="canevas_activite" style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px;">Activité :</label>
-                            <select id="canevas_activite" name="activite_id" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                <form id="canevasForm" class="param-upload-form" enctype="multipart/form-data" onsubmit="return false;" style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 20px; flex-shrink: 0;">
+                        <div class="form-field">
+                            <label for="canevas_activite">Activité :</label>
+                            <select id="canevas_activite" name="activite_id" required>
                                 <option value="">Sélectionner...</option>
                                 <?php foreach ($activites as $activite): ?>
                                     <option value="<?= $activite['id'] ?>"><?= htmlspecialchars($activite['nom']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div>
-                            <label for="canevas_commune" style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px;">Commune :</label>
-                            <select id="canevas_commune" name="commune_id" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                        <div class="form-field">
+                            <label for="canevas_commune">Commune :</label>
+                            <select id="canevas_commune" name="commune_id" required>
                                 <option value="">Sélectionner...</option>
                                 <?php foreach ($communes as $commune): ?>
                                     <option value="<?= $commune['id'] ?>"><?= htmlspecialchars($commune['nom']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div>
-                            <label for="canevas_file" style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px;">Fichier Page de Garde :</label>
-                            <input type="file" id="canevas_file" name="canevas_file" accept=".xls,.xlsx" required style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                        <div class="form-field">
+                            <label for="canevas_file">Fichier Page de Garde :</label>
+                            <input type="file" id="canevas_file" name="canevas_file" accept=".xls,.xlsx" required>
                         </div>
-                        <button type="button" onclick="submitCanevasForm()" style="padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">💾 Enregistrer</button>
-                    </div>
+                        <div class="form-field form-field-action">
+                            <button type="button" class="form-submit-btn form-submit-btn--canevas" onclick="submitCanevasForm()">💾 Enregistrer</button>
+                        </div>
                 </form>
-                
-                <div id="canevas-list" style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; border: 2px solid #e5e7eb; flex: 1; overflow-y: auto; min-height: 0;">
-                    <h4 style="font-size: 14px; margin-bottom: 15px; color: #1f2937; font-weight: 700; flex-shrink: 0;">📋 Pages de garde enregistrées :</h4>
-                    <div id="list-canevas-items" style="display: flex; flex-direction: column; gap: 8px; min-height: 100px;">
-                        <div style="text-align: center; padding: 30px; color: #999;">🔄 Chargement en cours...</div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -752,44 +679,35 @@ $terroirs_list = $db->getAll('terroirs');
                 <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Uploadez des fichiers Excel conclusion liés à une activité et une commune</p>
                 <div id="message-conclusion"></div>
                 
-                <form id="conclusionForm" enctype="multipart/form-data" onsubmit="return false;" style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 20px; flex-shrink: 0;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
-                        <div>
-                            <label for="conclusion_activite" style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px;">Activité :</label>
-                            <select id="conclusion_activite" name="activite_id" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                <form id="conclusionForm" class="param-upload-form" enctype="multipart/form-data" onsubmit="return false;" style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 20px; flex-shrink: 0;">
+                        <div class="form-field">
+                            <label for="conclusion_activite">Activité :</label>
+                            <select id="conclusion_activite" name="activite_id" required>
                                 <option value="">Sélectionner...</option>
                                 <?php foreach ($activites as $activite): ?>
                                     <option value="<?= $activite['id'] ?>"><?= htmlspecialchars($activite['nom']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div>
-                            <label for="conclusion_commune" style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px;">Commune :</label>
-                            <select id="conclusion_commune" name="commune_id" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                        <div class="form-field">
+                            <label for="conclusion_commune">Commune :</label>
+                            <select id="conclusion_commune" name="commune_id" required>
                                 <option value="">Sélectionner...</option>
                                 <?php foreach ($communes as $commune): ?>
                                     <option value="<?= $commune['id'] ?>"><?= htmlspecialchars($commune['nom']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div>
-                            <label for="conclusion_file" style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px;">Fichier Conclusion :</label>
-                            <input type="file" id="conclusion_file" name="conclusion_file" accept=".xls,.xlsx" required style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                        <div class="form-field">
+                            <label for="conclusion_file">Fichier Conclusion :</label>
+                            <input type="file" id="conclusion_file" name="conclusion_file" accept=".xls,.xlsx" required>
                         </div>
-                        <button type="button" onclick="submitConclusionForm()" style="padding: 8px 16px; background: #8b5cf6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">💾 Enregistrer</button>
-                    </div>
+                        <div class="form-field form-field-action">
+                            <button type="button" class="form-submit-btn form-submit-btn--conclusion" onclick="submitConclusionForm()">💾 Enregistrer</button>
+                        </div>
                 </form>
-                
-                <div id="conclusion-list" style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; border: 2px solid #e5e7eb; flex: 1; overflow-y: auto; min-height: 0;">
-                    <h4 style="font-size: 14px; margin-bottom: 15px; color: #1f2937; font-weight: 700; flex-shrink: 0;">📋 Conclusions enregistrées :</h4>
-                    <div id="list-conclusions-items" style="display: flex; flex-direction: column; gap: 8px; min-height: 100px;">
-                        <div style="text-align: center; padding: 30px; color: #999;">🔄 Chargement en cours...</div>
-                    </div>
-                </div>
             </div>
         </div>
-
-        <!-- ONGLET: PAGES DE GARDE POUR FUSION -->
     </div>
 </div>
 
@@ -851,17 +769,10 @@ $terroirs_list = $db->getAll('terroirs');
                 messageDiv.innerHTML = '<div style="color: #166534; padding: 12px; background: #dcfce7; border-radius: 4px; margin-bottom: 10px; border-left: 4px solid #22c55e; font-weight: 600;">✅ ' + data.message + '</div>';
                 canevasForm.reset();
                 
-                // Recharger la liste après 1 seconde
                 setTimeout(() => {
-                    console.log('Recharge des listes...');
-                    window.loadCanevas();
-                    
-                    // Aussi recharger la page canevas si elle est chargée
                     if (typeof window.loadCanevasPage === 'function') {
-                        console.log('Recharge de loadCanevasPage');
                         window.loadCanevasPage();
                     }
-                    
                     messageDiv.innerHTML = '';
                 }, 1500);
             } else {
@@ -948,17 +859,13 @@ $terroirs_list = $db->getAll('terroirs');
                 messageDiv.innerHTML = '<div style="color: #166534; padding: 12px; background: #dcfce7; border-radius: 4px; margin-bottom: 10px; border-left: 4px solid #22c55e; font-weight: 600;">✅ ' + data.message + '</div>';
                 conclusionForm.reset();
                 
-                // Recharger la liste après 1 seconde
                 setTimeout(() => {
-                    console.log('Recharge des listes...');
-                    window.loadConclusions();
-                    
-                    // Aussi recharger la page canevas si elle est chargée
+                    if (typeof window.loadConclusionsPage === 'function') {
+                        window.loadConclusionsPage();
+                    }
                     if (typeof window.loadCanevasPage === 'function') {
-                        console.log('Recharge de loadCanevasPage');
                         window.loadCanevasPage();
                     }
-                    
                     messageDiv.innerHTML = '';
                 }, 1500);
             } else {

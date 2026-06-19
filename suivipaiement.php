@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/config.php';
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -219,6 +220,8 @@ $writer = IOFactory::createWriter($fusionSpreadsheet, 'Xlsx');
 $writer->save($tempFilePath);
 
 updateProgress(100, 'Fusion terminée avec succès!');
+
+incrementFusionCount();
 
 // Marquer comme prêt pour téléchargement
 $_SESSION['download_ready'] = true;

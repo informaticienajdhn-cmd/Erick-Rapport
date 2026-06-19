@@ -75,11 +75,10 @@
     .canevas-table-wrapper {
         border: 1px solid #e5e7eb;
         border-radius: 6px;
-        overflow: hidden;
+        overflow-x: auto;
+        overflow-y: scroll;
         max-height: 700px;
         height: auto;
-        overflow-y: scroll;
-        overflow-x: hidden;
     }
 
     .canevas-table {
@@ -539,7 +538,7 @@
                             <div class="canevas-empty-icon">📭</div>
                             <div class="canevas-empty-text">Aucune page de garde enregistrée</div>
                             <p style="font-size: 12px; color: #ccc;">
-                                Allez dans Paramètres → PAGE DE GARDE pour enregistrer vos premiers fichiers
+                                Allez dans le menu <strong>Page de garde</strong> pour générer vos fichiers
                             </p>
                         </div>
                     `;

@@ -1,5 +1,8 @@
-/* 🚀 ERICKRAPPORT - CSS OPTIMISÉ v2.1 🚀 */
-/* Interface futuriste cyberpunk optimisée pour les performances */
+/* ERICKRAPPORT - CSS unifié v2.1 */
+@import url('styles-components.css');
+@import url('styles-responsive.css');
+
+/* Interface professionnelle */
 
 /* 🌌 Variables CSS optimisées */
 :root {
@@ -38,10 +41,20 @@
     --spacing-md: 1.5rem;
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
+
+    /* Couleurs sémantiques */
+    --success-green: #16a34a;
+    --warning-orange: #ea580c;
+    --surface-muted: #f9fafb;
+    --text-muted: #6b7280;
+    --text-body: #374151;
+
 }
 
 /* Sidebar professionnel */
 .sidebar {
+    width: 280px;
+    flex-shrink: 0;
     background: var(--white);
     border-radius: 14px;
     box-shadow: var(--shadow-main);
@@ -111,8 +124,8 @@
 
 /* Contenu à côté de la sidebar */
 .main-container {
-    display: flex !important;
-    flex-direction: row !important;
+    display: flex;
+    flex-direction: row;
     align-items: flex-start;
     gap: 2.5rem;
     padding: 2.5rem 1.5rem 2.5rem 2.5rem;
@@ -132,7 +145,8 @@
     max-height: 80vh;
     margin-left: 0;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     color: var(--primary-blue-dark);
     font-size: 0.85rem;
     transition: box-shadow 0.3s;
@@ -142,26 +156,19 @@
     .main-container {
         flex-direction: column;
         gap: 1.2rem;
-        padding: 1.2rem 0.5rem;
     }
+
     .sidebar {
         flex-direction: row;
-        min-height: unset;
         width: 100%;
         position: static;
         border-radius: 12px;
-        margin-bottom: 1rem;
-        gap: 0.5rem;
-        justify-content: space-between;
+        margin-bottom: 0.5rem;
     }
-    .sidebar .menu-btn, .sidebar .return-btn {
-        flex: 1 1 0%;
-        margin-bottom: 0;
-        padding: 0.7rem 0.5rem;
-        font-size: 1rem;
-    }
+
     .content-area {
-        padding: 1.2rem 0.7rem;
+        padding: 1rem 0.75rem;
+        width: 100%;
     }
 }
 
@@ -193,11 +200,7 @@
     box-shadow: var(--shadow-main);
 }
 
-.text-glow {
-    text-shadow: none;
-}
-
-/* 🌐 Reset et base optimisés */
+/* Reset et base */
 * {
     box-sizing: border-box;
 }
@@ -205,13 +208,6 @@
 body {
     font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
     background: var(--accent-grey);
-    background-image: 
-        radial-gradient(circle at 25% 25%, var(--neon-cyan) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, var(--neon-purple) 0%, transparent 50%),
-        repeating-linear-gradient(90deg, transparent, transparent 98px, rgba(0, 255, 255, 0.1) 100px),
-        repeating-linear-gradient(0deg, transparent, transparent 98px, rgba(0, 255, 255, 0.1) 100px);
-    background-size: 100% 100%, 100% 100%, 100px 100px, 100px 100px;
-    background-attachment: fixed;
     color: var(--primary-blue-dark);
     min-height: 100vh;
     margin: 0;
@@ -234,67 +230,7 @@ body {
     }
 }
 
-/* 🔮 Effet de particules optimisé */
-body::before {
-    display: none;
-}
-
-/* 🏗️ Layout principal optimisé */
-.main-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: var(--container-padding);
-    gap: var(--spacing-md);
-    position: relative;
-}
-
-/* 🎮 Sidebar optimisée */
-.sidebar {
-    width: 280px;
-    flex-shrink: 0;
-    padding: var(--spacing-md);
-    position: relative;
-    transition: all var(--transition-normal);
-}
-
-.sidebar::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    display: none;
-}
-
-.sidebar:hover::before {
-    display: none;
-}
-
-/* 🖥️ Zone de contenu optimisée */
-.content-area {
-    flex: 1;
-    padding: var(--spacing-xl);
-    min-height: 500px;
-    position: relative;
-    overflow: hidden;
-}
-
-.content-area::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
-    animation: scanLine 3s ease-in-out infinite;
-    will-change: left;
-}
-
-/* 🎯 Boutons optimisés */
+/* Boutons */
 .button, .menu-btn, .btn-telecharger, .btn-fusionner, .btn-suivi-paiement {
     background: var(--primary-blue-light);
     border-color: var(--primary-blue-light);
@@ -330,17 +266,6 @@ body::before {
     transform: translateY(-1px);
 }
 
-.button::before, .menu-btn::before, .btn-telecharger::before, .btn-fusionner::before, .btn-suivi-paiement::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
-    transition: left var(--transition-slow);
-}
-
 .button:hover, .menu-btn:hover, .btn-telecharger:hover, .btn-fusionner:hover:not(:disabled), .btn-suivi-paiement:hover {
     color: var(--primary-blue-dark);
     background: var(--accent-grey);
@@ -349,14 +274,17 @@ body::before {
     text-shadow: none;
 }
 
-.button:hover::before, .menu-btn:hover::before, .btn-telecharger:hover::before, .btn-fusionner:hover:not(:disabled)::before, .btn-suivi-paiement:hover::before {
-    left: 100%;
+.menu-btn.active-btn {
+    background: var(--primary-blue);
+    color: var(--white);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary-blue);
 }
 
-/* 🎮 Variantes de boutons */
 .btn-fusionner {
     border-color: var(--primary-blue);
     color: var(--primary-blue);
+    background: var(--white);
     box-shadow: var(--shadow-main);
 }
 
@@ -372,55 +300,34 @@ body::before {
     background: var(--accent-grey-darker);
     cursor: not-allowed;
     opacity: 0.5;
-    box-shadow: var(--shadow-main);
 }
 
-.menu-btn.active-btn {
-    background: var(--primary-blue);
-    color: var(--white);
-    box-shadow: var(--shadow-hover);
-    border-color: var(--primary-blue);
-}
-
-/* 📊 Barre de progression optimisée */
+/* Barre de progression */
 .progress-container {
     width: 100%;
-    height: 40px;
-    background: var(--darker-bg);
-    border: 2px solid var(--neon-cyan);
-    border-radius: 20px;
-    margin: var(--spacing-md) 0;
+    height: 18px;
+    background: var(--accent-grey);
+    border: 1px solid var(--accent-grey-darker);
+    border-radius: 8px;
+    margin: var(--spacing-sm) 0;
     position: relative;
     overflow: hidden;
-    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
     opacity: 0;
     transition: opacity var(--transition-slow);
+    flex-shrink: 0;
 }
 
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green), var(--neon-purple));
-    background-size: 300% 100%;
-    border-radius: 18px;
-    position: relative;
-    transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    animation: progressFlow 2s ease-in-out infinite;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    will-change: width, background-position;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-dark));
+    border-radius: 6px;
+    transition: width 0.4s ease;
 }
 
 .progress-bar::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
-    animation: progressScan 1.5s ease-in-out infinite;
-    border-radius: 18px;
-    will-change: left;
+    display: none;
 }
 
 #progress-text {
@@ -428,19 +335,17 @@ body::before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: var(--dark-bg);
-    font-family: 'Orbitron', monospace;
-    font-weight: 700;
-    font-size: 14px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.6);
+    color: var(--primary-blue-dark);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 11px;
+    text-shadow: none;
     z-index: 10;
     margin: 0;
     white-space: nowrap;
     text-align: center;
     width: 100%;
     line-height: 1;
-    letter-spacing: 1px;
-    text-transform: uppercase;
 }
 
 /* 🎯 Headers optimisés */
@@ -479,7 +384,6 @@ header h1 {
 .footer p {
     margin: 5px 0;
     font-size: 14px;
-    text-shadow: 0 0 10px var(--neon-cyan);
 }
 
 /* 🔗 Liens sociaux optimisés */
@@ -512,15 +416,15 @@ header h1 {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10000;
-    background: linear-gradient(145deg, var(--darker-bg), var(--dark-bg));
-    border: 2px solid var(--neon-green);
-    border-radius: 15px;
+    background: var(--white);
+    border: 2px solid var(--primary-blue);
+    border-radius: 12px;
     padding: var(--spacing-xl);
-    box-shadow: 0 0 50px rgba(57, 255, 20, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-hover);
     text-align: center;
-    min-width: 400px;
-    backdrop-filter: blur(20px);
-    animation: alertAppear 0.5s ease-out;
+    min-width: 320px;
+    max-width: 90vw;
+    animation: alertAppear 0.3s ease-out;
 }
 
 .alert-content {
@@ -532,31 +436,40 @@ header h1 {
 
 .checkmark {
     font-size: 40px;
-    color: var(--neon-green);
-    text-shadow: var(--glow-green);
-    animation: checkmarkPulse 2s ease-in-out infinite;
+    color: var(--success-green);
 }
 
 .alert-content p {
-    color: var(--neon-cyan);
-    font-family: 'Rajdhani', monospace;
+    color: var(--text-body);
+    font-family: inherit;
     font-size: 16px;
     margin: 0;
     line-height: 1.5;
 }
 
 .alert-content button {
-    @extend .btn-base;
-    background: var(--darker-bg);
-    border-color: var(--neon-green);
-    color: var(--neon-green);
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 14px;
     padding: 12px 25px;
+    margin: 10px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    width: auto;
+    min-width: 120px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--success-green);
+    background: var(--white);
+    color: var(--success-green);
 }
 
 .alert-content button:hover {
-    background: var(--neon-green);
-    color: var(--dark-bg);
-    box-shadow: var(--glow-green);
+    background: var(--success-green);
+    color: var(--white);
+    box-shadow: var(--shadow-hover);
 }
 
 /* 🔮 Conteneurs optimisés */
@@ -577,71 +490,51 @@ header h1 {
 
 /* 📝 Formulaires optimisés */
 input[type="file"], label {
-    font-family: 'Rajdhani', monospace;
-    color: var(--neon-cyan);
-    font-size: 16px;
+    font-family: inherit;
+    color: var(--text-body);
+    font-size: var(--font-size-base);
 }
 
 input[type="file"] {
-    background: var(--darker-bg);
-    border: 2px solid var(--neon-cyan);
+    background: var(--white);
+    border: 1px solid var(--accent-grey-darker);
     border-radius: 8px;
     padding: 10px;
-    color: var(--neon-cyan);
+    color: var(--text-body);
     width: 100%;
     margin: var(--spacing-sm) 0;
-    transition: box-shadow var(--transition-normal);
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 input[type="file"]:focus {
     outline: none;
-    box-shadow: var(--glow-cyan);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-/* 🎯 Indicateurs optimisés */
 .loading-spinner {
-    color: var(--neon-cyan);
-    font-family: 'Orbitron', monospace;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    animation: loadingPulse 1.5s ease-in-out infinite;
+    color: var(--primary-blue);
+    font-family: inherit;
+    font-weight: 600;
 }
 
 .success-icon, .echec-icon {
-    animation: iconGlow 1s ease-in-out infinite;
+    animation: none;
 }
 
-/* 🎮 Navigation optimisée */
 hr {
     border: none;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
-    margin: var(--spacing-xl) 0;
-    animation: hrGlow 3s ease-in-out infinite;
+    height: 1px;
+    background: var(--accent-grey-darker);
+    margin: var(--spacing-lg) 0;
 }
 
-/* 🔥 Effet matrix optimisé */
 body.body-import::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        linear-gradient(0deg, transparent 24%, rgba(0, 255, 255, 0.05) 25%, rgba(0, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 255, 0.05) 75%, rgba(0, 255, 255, 0.05) 76%, transparent 77%, transparent),
-        linear-gradient(90deg, transparent 24%, rgba(0, 255, 255, 0.05) 25%, rgba(0, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 255, 0.05) 75%, rgba(0, 255, 255, 0.05) 76%, transparent 77%, transparent);
-    background-size: 50px 50px;
-    pointer-events: none;
-    z-index: -2;
-    animation: matrixMove 20s linear infinite;
-    will-change: transform;
+    display: none;
 }
 
-/* 🎮 Animations d'entrée optimisées */
 .body-index {
-    animation: pageLoad 1s ease-out;
+    animation: none;
 }
 
 /* 📱 Responsive optimisé */
@@ -661,7 +554,7 @@ body.body-import::after {
     }
     
     .progress-container {
-        height: 35px;
+        height: 16px;
     }
     
     #progress-text {
@@ -690,75 +583,6 @@ body.body-import::after {
     }
 }
 
-/* 🎯 Animations optimisées */
-@keyframes backgroundPulse {
-    0%, 100% { filter: brightness(1) contrast(1); }
-    50% { filter: brightness(1.1) contrast(1.2); }
-}
-
-@keyframes particleFloat {
-    0% { transform: translateY(0px) translateX(0px); }
-    33% { transform: translateY(-100px) translateX(100px); }
-    66% { transform: translateY(-200px) translateX(-100px); }
-    100% { transform: translateY(-300px) translateX(200px); }
-}
-
-@keyframes borderGlow {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
-}
-
-@keyframes scanLine {
-    0% { left: -100%; }
-    100% { left: 100%; }
-}
-
-@keyframes disabledPulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 0.7; }
-}
-
-@keyframes buttonActivation {
-    0% { 
-        border-color: var(--danger-red);
-        color: var(--danger-red);
-        box-shadow: 0 0 10px rgba(255, 0, 64, 0.2);
-    }
-    50% { 
-        border-color: var(--warning-yellow);
-        color: var(--warning-yellow);
-        box-shadow: 0 0 30px rgba(255, 255, 0, 0.5);
-        transform: scale(1.05);
-    }
-    100% { 
-        border-color: var(--neon-green);
-        color: var(--neon-green);
-        box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
-    }
-}
-
-@keyframes progressFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-@keyframes progressScan {
-    0% { left: -100%; }
-    100% { left: 100%; }
-}
-
-@keyframes titleGlow {
-    0%, 100% { 
-        text-shadow: var(--glow-cyan);
-        transform: scale(1);
-    }
-    50% { 
-        text-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-cyan), 0 0 90px var(--neon-cyan);
-        transform: scale(1.02);
-    }
-}
-
 @keyframes alertAppear {
     0% {
         opacity: 0;
@@ -770,55 +594,7 @@ body.body-import::after {
     }
 }
 
-@keyframes checkmarkPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-@keyframes loadingPulse {
-    0%, 100% { 
-        opacity: 0.5;
-        transform: scale(1);
-    }
-    50% { 
-        opacity: 1;
-        transform: scale(1.05);
-    }
-}
-
-@keyframes iconGlow {
-    0%, 100% { 
-        filter: brightness(1);
-        transform: scale(1);
-    }
-    50% { 
-        filter: brightness(1.5);
-        transform: scale(1.1);
-    }
-}
-
-@keyframes hrGlow {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-}
-
-@keyframes matrixMove {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(50px, 50px); }
-}
-
-@keyframes pageLoad {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 🚀 Optimisations de performance */
+/* Optimisations de performance */
 .gpu-accelerated {
     transform: translateZ(0);
     will-change: transform;

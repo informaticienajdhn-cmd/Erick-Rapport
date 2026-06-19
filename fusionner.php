@@ -124,6 +124,8 @@ try {
     
     file_put_contents($fusionDataFile, $json_content);
     file_put_contents(__DIR__.'/logs/debug_fusion.txt', "[".date('Y-m-d H:i:s')."] Fichier fusion_data écrit\n", FILE_APPEND);
+
+    incrementFusionCount();
     
     $_SESSION['progress'] = 100; // S'assurer que la progression est à 100%
     $_SESSION['progress_message'] = 'Fusion terminée. Redirection...';

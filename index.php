@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/css-config.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ErickRapport - Gestion Professionnelle des Rapports Excel</title>
      <meta name="description" content="Outil professionnel pour la fusion et le suivi des paiements via fichiers Excel">
-    <link rel="stylesheet" href="styles-optimized.css?v=<?php echo time(); ?>">
+    <?php echo getCSSLink(); ?>
     <script src="js/common.js"></script>
 </head>
 <!-- Le JavaScript est maintenant géré par js/common.js -->
@@ -21,6 +22,7 @@
             <button class="menu-btn" data-page="suivi">Suivi des paiements</button>
             <button class="menu-btn" data-page="rapports">📁 Rapports</button>
             <button class="menu-btn" data-page="canevas">📄 Canevas</button>
+            <button class="menu-btn" data-page="page-de-garde">📋 Page de garde</button>
             <button class="menu-btn" data-page="parametres">⚙️ Paramètres</button>
             <button class="menu-btn return-btn" data-action="home">
                 <span class="btn-icon">🏠</span>

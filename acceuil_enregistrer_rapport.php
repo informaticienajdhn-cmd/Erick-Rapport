@@ -125,7 +125,7 @@
 
             <input type="hidden" id="commune_id" name="commune_id" value="<?php echo htmlspecialchars($communeId ?? ''); ?>">
 
-            <div class="button-group" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+            <div class="button-group">
                 <button type="button" class="btn-retour" onclick="navigation.loadContent('fusion')">
                     ← Retour
                 </button>

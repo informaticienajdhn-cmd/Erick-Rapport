@@ -13,12 +13,12 @@
     </header>
     <div class="container">
         <!-- Formulaire AJAX pour téléchargement -->
-        <form id="uploadForm" enctype="multipart/form-data" method="POST" style="display: flex; gap: 5px; align-items: center; margin-bottom: 2px; flex-shrink: 0;">
-            <div style="flex: 1;">
-                <label for="file" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Fichier Excel :</label>
-                <input type="file" name="excel_files[]" id="file" accept=".xls,.xlsx" multiple required style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+        <form id="uploadForm" class="upload-form-row" enctype="multipart/form-data" method="POST">
+            <div class="upload-field">
+                <label for="file">Fichier Excel :</label>
+                <input type="file" name="excel_files[]" id="file" accept=".xls,.xlsx" multiple required>
             </div>
-            <button type="button" class="btn-telecharger-compact" style="margin-top: 15px; padding: 3px 6px; font-size: 9px; height: 22px;">📂 Upload</button>
+            <button type="button" class="btn-telecharger-compact">📂 Upload</button>
         </form>
         <!-- Formulaire de fusion des listes -->
         <?php
@@ -31,7 +31,7 @@
                 <div id="no-files-message" class="error-message" style="display: none; margin-bottom: 10px;">
                     ⚠️ Aucun fichier détecté. Veuillez uploader vos fichiers Excel avant de fusionner.
                 </div>
-                <div class="form-grid" style="grid-template-columns: repeat(2, 1fr); overflow: hidden;">
+                <div class="form-grid form-grid--two-cols">
                     <div class="form-group" style="min-width: 0;">
                         <label for="terroir">Terroir :</label>
                         <select id="terroir" name="terroir" required style="width: 100%;">

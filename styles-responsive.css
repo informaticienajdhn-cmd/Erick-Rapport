@@ -1,0 +1,483 @@
+/**
+ * ERICKRAPPORT - Responsive global (toutes les pages)
+ */
+
+/* ===== Coque index.php ===== */
+@media (max-width: 900px) {
+    .sidebar {
+        flex-wrap: wrap;
+        height: auto;
+        max-height: none;
+    }
+
+    .sidebar .menu-btn,
+    .sidebar .return-btn {
+        flex: 1 1 calc(33.333% - 0.35rem);
+        min-width: 90px;
+        font-size: 0.82rem;
+        padding: 0.55rem 0.35rem;
+        min-height: 44px;
+    }
+
+    .sidebar .return-btn {
+        flex: 1 1 100%;
+        margin-top: 0.25rem;
+    }
+
+    .content-area {
+        height: auto;
+        max-height: none;
+        min-height: 45vh;
+    }
+
+    .main-container {
+        min-height: auto;
+        padding: 1rem 0.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .sidebar .menu-btn,
+    .sidebar .return-btn {
+        flex: 1 1 calc(50% - 0.25rem);
+        font-size: 0.75rem;
+    }
+
+    .footer p {
+        font-size: 12px;
+        padding: 0 8px;
+    }
+
+    .footer .social-container p {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .social-icon {
+        margin: 4px 0;
+        width: 100%;
+        max-width: 220px;
+        text-align: center;
+    }
+}
+
+/* En-têtes des pages chargées dynamiquement */
+.body-import header,
+#content header {
+    margin-bottom: 0.75rem;
+}
+
+.body-import header h1,
+#content header h1 {
+    font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+    letter-spacing: 0.5px;
+}
+
+.body-import .container,
+#content > .container {
+    padding: clamp(0.75rem, 3vw, 1.5rem);
+    margin: 0.5rem 0;
+}
+
+/* ===== Formulaire upload compact (fusion / suivi) ===== */
+.upload-form-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.upload-form-row .upload-field {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.upload-form-row label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.upload-form-row input[type="file"] {
+    width: 100%;
+    margin: 0;
+    font-size: 12px;
+    min-height: 38px;
+    padding: 6px 8px;
+    box-sizing: border-box;
+}
+
+.upload-form-row .btn-telecharger-compact {
+    flex: 0 0 auto;
+    margin-top: 0;
+    min-height: 38px;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+@media (max-width: 599px) {
+    .upload-form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .upload-form-row .btn-telecharger-compact {
+        width: 100%;
+    }
+}
+
+/* ===== Grilles de formulaires ===== */
+.form-grid--two-cols {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 768px) {
+    .form-grid--two-cols {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== Suivi paiement ===== */
+.suivi-params-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.suivi-params-row .suivi-field {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+.suivi-params-row label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.suivi-params-row input[type="text"] {
+    width: 100%;
+    font-size: 12px;
+    min-height: 38px;
+    padding: 6px 8px;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .suivi-params-row {
+        flex-direction: column;
+    }
+}
+
+/* ===== Barre de progression ===== */
+@media (max-width: 768px) {
+    .progress-steps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .progress-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .progress-steps li {
+        font-size: 8px;
+        padding: 4px 2px;
+    }
+
+    .progress-details {
+        max-height: 160px;
+    }
+}
+
+/* ===== Rapports enregistrés ===== */
+.rapports-filter-bar {
+    margin: 16px 0;
+    padding: 12px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.rapports-filter-bar label {
+    font-weight: 600;
+    margin: 0;
+}
+
+.rapports-filter-bar select {
+    flex: 1 1 200px;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#rapports-list {
+    margin-top: 16px;
+    max-height: min(600px, 55vh);
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+#rapports-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#rapports-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#rapports-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.rapport-item {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.rapport-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #2563eb;
+}
+
+.rapport-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.rapport-nom {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 5px;
+    word-break: break-word;
+}
+
+.rapport-details {
+    font-size: 12px;
+    color: #6b7280;
+    word-break: break-word;
+}
+
+.rapport-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: 0;
+    flex-shrink: 0;
+}
+
+.rapport-actions button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.btn-download { background: #10b981; color: white; }
+.btn-download:hover { background: #059669; }
+.btn-rename { background: #f59e0b; color: white; }
+.btn-rename:hover { background: #d97706; }
+.btn-delete-rapport { background: #ef4444; color: white; }
+.btn-delete-rapport:hover { background: #dc2626; }
+
+.rapports-empty,
+.empty-state {
+    text-align: center;
+    padding: 40px 16px;
+    color: #6b7280;
+}
+
+@media (max-width: 768px) {
+    .rapport-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .rapport-actions button {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 110px;
+    }
+}
+
+@media (max-width: 480px) {
+    .rapport-actions {
+        flex-direction: column;
+    }
+
+    .rapport-actions button {
+        width: 100%;
+    }
+
+    #rapports-list {
+        max-height: 50vh;
+    }
+}
+
+/* ===== Enregistrer rapport ===== */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.info-item {
+    font-size: 13px;
+    padding: 8px 10px;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+    word-break: break-word;
+}
+
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 599px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group .btn-retour,
+    .button-group .btn-fusionner {
+        width: 100%;
+    }
+}
+
+/* ===== Paramètres ===== */
+.params-page-wrap {
+    padding: 0 12px 12px;
+}
+
+.params-grid {
+    max-height: none;
+}
+
+@media (min-width: 901px) {
+    .params-grid {
+        max-height: calc(100vh - 120px);
+    }
+}
+
+@media (max-width: 599px) {
+    .tabs-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .tab-button {
+        font-size: 9px !important;
+        padding: 6px 2px !important;
+        line-height: 1.15 !important;
+    }
+
+    .param-upload-form {
+        grid-template-columns: 1fr !important;
+    }
+
+    .param-upload-form .form-field-action {
+        grid-column: 1 / -1;
+    }
+
+    .add-form {
+        flex-direction: column;
+    }
+
+    .add-form input,
+    .add-form button {
+        width: 100%;
+    }
+
+    .params-header {
+        padding: 14px;
+    }
+
+    .params-header h2 {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .tabs-container {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+/* ===== Canevas ===== */
+.canevas-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: clamp(10px, 3vw, 20px);
+}
+
+.canevas-table-wrapper {
+    overflow-x: auto !important;
+    overflow-y: scroll;
+}
+
+@media (max-width: 599px) {
+    .canevas-tabs {
+        flex-wrap: wrap;
+    }
+
+    .canevas-tab-button {
+        flex: 1 1 auto;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    .canevas-header {
+        padding: 16px;
+    }
+
+    .canevas-header h2 {
+        font-size: 1.1rem;
+    }
+}
+
+/* ===== Accueil ===== */
+@media (max-width: 600px) {
+    .welcome-container {
+        padding: 10px;
+    }
+
+    .welcome-header,
+    .welcome-container .stats-container {
+        padding: 16px;
+    }
+}

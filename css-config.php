@@ -36,12 +36,20 @@ function getCSSLink() {
     $config = getCSSConfig();
     $version = $config['version'];
     $file = $config['file'];
-    
-    // Ajouter un timestamp en développement pour éviter le cache
-    if ($config['minified'] === false) {
-        $version .= '-' . time();
+    $filePath = __DIR__ . '/' . $file;
+
+    if ($config['minified'] === false && file_exists($filePath)) {
+        $version .= '-' . filemtime($filePath);
+        $componentsPath = __DIR__ . '/styles-components.css';
+        $responsivePath = __DIR__ . '/styles-responsive.css';
+        if (file_exists($componentsPath)) {
+            $version .= '-' . filemtime($componentsPath);
+        }
+        if (file_exists($responsivePath)) {
+            $version .= '-' . filemtime($responsivePath);
+        }
     }
-    
+
     return "<link rel=\"stylesheet\" href=\"{$file}?v={$version}\">";
 }
 

@@ -360,6 +360,7 @@ class ErickRapportApp {
             }
             localStorage.setItem("uploadMessage", message);
             this.displayAlert(message);
+            this.refreshHomeStats();
             // Forcer la vérification de l'état du bouton de fusion après upload
             this.checkFusionButtonState();
             // Si upload réussi et page fusion, proposer la fusion
@@ -653,6 +654,7 @@ class ErickRapportApp {
                         console.log('Progression terminée');
                         console.log('Données reçues:', data);
                         this.logProgressMessage('Fusion terminée');
+                        this.refreshHomeStats();
                         
                         if (data.redirect) {
                             this.stopProgressTracking();
@@ -937,6 +939,41 @@ class ErickRapportApp {
     }
 
     /**
+     * Met à jour les cartes de synthèse de la page d'accueil
+     */
+    refreshHomeStats() {
+        fetch(`api_home_stats.php?_=${Date.now()}`, { cache: 'no-store' })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success || !data.stats) {
+                    return;
+                }
+
+                const stats = data.stats;
+                const uploadedEl = document.getElementById('stat-uploaded-files');
+                const fusionsEl = document.getElementById('stat-total-fusions');
+                const versionEl = document.getElementById('stat-version');
+                const activityEl = document.getElementById('stat-last-activity');
+
+                if (uploadedEl) {
+                    uploadedEl.textContent = stats.uploadedFiles ?? 0;
+                }
+                if (fusionsEl) {
+                    fusionsEl.textContent = stats.totalFusions ?? 0;
+                }
+                if (versionEl) {
+                    versionEl.textContent = stats.version ?? '2.1';
+                }
+                if (activityEl) {
+                    activityEl.textContent = stats.lastActivity ?? 'Aucune activité récente';
+                }
+            })
+            .catch(error => {
+                console.warn('Impossible de rafraîchir les statistiques:', error);
+            });
+    }
+
+    /**
      * Charge le contenu d'une page
      */
     loadContent(page) {
@@ -949,6 +986,7 @@ class ErickRapportApp {
             'fusion': 'acceuil_fusion.php',
             'suivi': 'acceuil_suivi_paiement.php',
             'canevas': 'acceuil_canevas.php',
+            'page-de-garde': 'acceuil_page_de_garde.php',
             'parametres': 'acceuil_parametres.php',
             'rapports': 'acceuil_rapports.php',
             'enregistrer-rapport': 'acceuil_enregistrer_rapport.php',
@@ -967,7 +1005,7 @@ class ErickRapportApp {
         }
 
         // Chargement du contenu
-        fetch(file)
+        fetch(`${file}?_=${Date.now()}`, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
@@ -1014,6 +1052,9 @@ class ErickRapportApp {
                 // Charger les conclusions si la page les affiche
                 if (typeof window.loadConclusionsPage === 'function') {
                     setTimeout(() => window.loadConclusionsPage(), 100);
+                }
+                if (page === 'home') {
+                    this.refreshHomeStats();
                 }
             })
             .catch(error => {
@@ -1116,6 +1157,7 @@ class ErickRapportApp {
                 
                 if (result.success) {
                     messageContainer.innerHTML = '<div class="success-message">✓ ' + result.message + '</div>';
+                    this.refreshHomeStats();
                     
                     // Nettoyer le lastPage du localStorage pour éviter la redirection
                     localStorage.removeItem('lastPage');

@@ -12,12 +12,12 @@
     </header>
     <div class="container">
         <!-- Formulaire pour télécharger les fichiers -->
-        <form id="uploadFormSuivi" action="upload_suivi_paiement.php" method="POST" enctype="multipart/form-data" style="display: flex; gap: 5px; align-items: center; margin-bottom: 2px; flex-shrink: 0;">
-            <div style="flex: 1;">
-                <label for="file" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Fichier Excel :</label>
-                <input type="file" name="excel_files[]" id="file" accept=".xls,.xlsx" multiple required style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+        <form id="uploadFormSuivi" class="upload-form-row" action="upload_suivi_paiement.php" method="POST" enctype="multipart/form-data">
+            <div class="upload-field">
+                <label for="file">Fichier Excel :</label>
+                <input type="file" name="excel_files[]" id="file" accept=".xls,.xlsx" multiple required>
             </div>
-            <button type="button" class="btn-telecharger-compact" style="margin-top: 15px; padding: 3px 6px; font-size: 9px; height: 22px;">📂 Upload</button>
+            <button type="button" class="btn-telecharger-compact">📂 Upload</button>
         </form>
         
         <!-- Formulaire pour fusionner les listes -->
@@ -27,18 +27,18 @@
         ?>
         <form id="suiviForm" action="suivipaiement.php" method="POST" style="margin-bottom: 10px;">
             <!-- Section de paramétrage -->
-            <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-shrink: 0;">
-                <div style="flex: 1;">
-                    <label for="titre_suivi" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Titre du rapport :</label>
-                    <input type="text" id="titre_suivi" name="titre_suivi" value="SUIVI DES PAIEMENTS" style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+            <div class="suivi-params-row">
+                <div class="suivi-field">
+                    <label for="titre_suivi">Titre du rapport :</label>
+                    <input type="text" id="titre_suivi" name="titre_suivi" value="SUIVI DES PAIEMENTS">
                 </div>
-                <div style="flex: 1;">
-                    <label for="commune_suivi" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Commune :</label>
-                    <input type="text" id="commune_suivi" name="commune_suivi" placeholder="Ex: KARIANGA" style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+                <div class="suivi-field">
+                    <label for="commune_suivi">Commune :</label>
+                    <input type="text" id="commune_suivi" name="commune_suivi" placeholder="Ex: KARIANGA">
                 </div>
-                <div style="flex: 1;">
-                    <label for="terroir_suivi" style="display: block; margin-bottom: 2px; font-weight: 600; font-size: 9px;">Terroir :</label>
-                    <input type="text" id="terroir_suivi" name="terroir_suivi" placeholder="Ex: KARIANGA" style="width: 100%; font-size: 9px; height: 22px; padding: 2px 4px;">
+                <div class="suivi-field">
+                    <label for="terroir_suivi">Terroir :</label>
+                    <input type="text" id="terroir_suivi" name="terroir_suivi" placeholder="Ex: KARIANGA">
                 </div>
             </div>
             <button type="submit" class="btn-fusionner" <?php echo $hasFiles ? '' : 'disabled'; ?>>🔗 Fusionner les listes</button>

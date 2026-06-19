@@ -60,4 +60,115 @@ if (!is_dir(LOG_DIR)) {
 function sanitize_input($input) {
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
+
+/**
+ * Incrémente le compteur de fusions réalisées
+ */
+function incrementFusionCount() {
+    try {
+        require_once __DIR__ . '/classes/Database.php';
+        $db = Database::getInstance()->getConnection();
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS app_stats (
+                key TEXT PRIMARY KEY,
+                value INTEGER NOT NULL DEFAULT 0,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+        $db->exec("
+            INSERT INTO app_stats (key, value, updated_at)
+            VALUES ('total_fusions', 1, CURRENT_TIMESTAMP)
+            ON CONFLICT(key) DO UPDATE SET
+                value = value + 1,
+                updated_at = CURRENT_TIMESTAMP
+        ");
+    } catch (Exception $e) {
+        error_log('incrementFusionCount: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Statistiques affichées sur la page d'accueil
+ */
+function getHomeStats() {
+    $stats = [
+        'uploadedFiles' => 0,
+        'totalFusions' => 0,
+        'savedReports' => 0,
+        'version' => '2.1',
+        'lastActivity' => 'Aucune activité récente'
+    ];
+
+    $files = [];
+    if (is_dir(UPLOAD_DIR)) {
+        $files = glob(UPLOAD_DIR . '*.{xls,xlsx}', GLOB_BRACE) ?: [];
+        $stats['uploadedFiles'] = count($files);
+
+        if (!empty($files)) {
+            $latestUpload = max(array_map('filemtime', $files));
+            $stats['lastActivity'] = 'Dernière activité: ' . date('d/m/Y H:i', $latestUpload);
+        }
+    }
+
+    try {
+        require_once __DIR__ . '/classes/Database.php';
+        $db = Database::getInstance()->getConnection();
+
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS app_stats (
+                key TEXT PRIMARY KEY,
+                value INTEGER NOT NULL DEFAULT 0,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+
+        $stmt = $db->query("SELECT value FROM app_stats WHERE key = 'total_fusions'");
+        $fusionCount = (int) $stmt->fetchColumn();
+
+        $tableExists = $db->query("
+            SELECT name FROM sqlite_master
+            WHERE type = 'table' AND name = 'rapports_enregistres'
+        ")->fetchColumn();
+
+        if ($tableExists) {
+            $stats['savedReports'] = (int) $db->query("SELECT COUNT(*) FROM rapports_enregistres")->fetchColumn();
+
+            if ($fusionCount === 0 && $stats['savedReports'] > 0) {
+                $db->prepare("
+                    INSERT INTO app_stats (key, value, updated_at)
+                    VALUES ('total_fusions', :value, CURRENT_TIMESTAMP)
+                    ON CONFLICT(key) DO UPDATE SET
+                        value = excluded.value,
+                        updated_at = CURRENT_TIMESTAMP
+                ")->execute(['value' => $stats['savedReports']]);
+                $fusionCount = $stats['savedReports'];
+            }
+
+            $stats['totalFusions'] = $fusionCount;
+
+            $latestReport = $db->query("
+                SELECT created_at FROM rapports_enregistres
+                ORDER BY datetime(created_at) DESC
+                LIMIT 1
+            ")->fetchColumn();
+
+            if ($latestReport) {
+                $reportTime = strtotime($latestReport);
+                $uploadTime = !empty($files) ? max(array_map('filemtime', $files)) : 0;
+                $fusionTime = strtotime($db->query("
+                    SELECT updated_at FROM app_stats WHERE key = 'total_fusions'
+                ")->fetchColumn() ?: '');
+
+                $latest = max(array_filter([$reportTime, $uploadTime, $fusionTime ?: 0]));
+                if ($latest > 0) {
+                    $stats['lastActivity'] = 'Dernière activité: ' . date('d/m/Y H:i', $latest);
+                }
+            }
+        }
+    } catch (Exception $e) {
+        error_log('getHomeStats: ' . $e->getMessage());
+    }
+
+    return $stats;
+}
 ?>
